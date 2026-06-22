@@ -1,0 +1,52 @@
+.survey-table {
+  margin-top: 2rem;
+  overflow-x: auto;
+  border: 1px solid #334155;
+  border-radius: 12px;
+}
+
+.survey-table__table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 2100px;
+}
+
+.survey-table__th,
+.survey-table__td {
+  padding: 0.85rem;
+  border-bottom: 1px solid #334155;
+  text-align: right;
+}
+
+.survey-table__th {
+  background: #1e293b;
+  color: #93c5fd;
+}
+
+.survey-table__td {
+  color: #f8fafc;
+}
+
+.survey-table__th:first-child,
+.survey-table__td:first-child {
+  text-align: left;
+}
+
+.survey-table__th span {
+  display: inline-block;
+  margin-top: 0.2rem;
+  color: #94a3b8;
+  font-size: 0.75rem;
+  font-weight: 400;
+}
+
+@media screen and (max-width: 640px) {
+  .survey-table {
+    margin-top: 1rem;
+  }
+
+  .survey-table__th,
+  .survey-table__td {
+    padding: 0.65rem;
+  }
+}

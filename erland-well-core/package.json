@@ -1,0 +1,24 @@
+{
+  "name": "erland-well-core",
+  "version": "0.1.0",
+  "description": "Librería JavaScript para cálculos de pozos direccionales usando Minimum Curvature",
+  "type": "module",
+  "main": "src/index.js",
+  "private": true,
+  "scripts": {
+    "test": "vitest",
+     "example:basic": "node examples/basicSurvey.js"
+  },
+  "keywords": [
+    "directional-drilling",
+    "wellpath",
+    "minimum-curvature",
+    "survey",
+    "oilfield"
+  ],
+  "author": "Erland Ruiz Rivera",
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "vitest": "^4.1.9"
+  }
+}

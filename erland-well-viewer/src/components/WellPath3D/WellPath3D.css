@@ -1,0 +1,65 @@
+.well-path-3d {
+  margin-top: 2rem;
+  padding: 1rem;
+  border: 1px solid #334155;
+  border-radius: 12px;
+  background: #0f172a;
+}
+
+.well-path-3d__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.well-path-3d__title {
+  margin: 0 0 0.5rem;
+  color: #93c5fd;
+  font-size: 1.2rem;
+}
+
+.well-path-3d__description {
+  margin: 0;
+  color: #cbd5e1;
+}
+
+.well-path-3d__summary {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.well-path-3d__summary span {
+  padding: 0.45rem 0.75rem;
+  border: 1px solid #334155;
+  border-radius: 999px;
+  background: #1e293b;
+  color: #e5e7eb;
+  font-size: 0.85rem;
+}
+
+.well-path-3d__chart {
+  width: 100%;
+  height: 560px;
+}
+
+@media screen and (max-width: 640px) {
+  .well-path-3d {
+    padding: 0.75rem;
+  }
+
+  .well-path-3d__header {
+    flex-direction: column;
+  }
+
+  .well-path-3d__summary {
+    justify-content: flex-start;
+  }
+
+  .well-path-3d__chart {
+    height: 420px;
+  }
+}

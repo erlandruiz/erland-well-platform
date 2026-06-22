@@ -1,0 +1,65 @@
+.plan-view-2d {
+  margin-top: 2rem;
+  padding: 1rem;
+  border: 1px solid #334155;
+  border-radius: 12px;
+  background: #0f172a;
+}
+
+.plan-view-2d__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.plan-view-2d__title {
+  margin: 0 0 0.5rem;
+  color: #93c5fd;
+  font-size: 1.2rem;
+}
+
+.plan-view-2d__description {
+  margin: 0;
+  color: #cbd5e1;
+}
+
+.plan-view-2d__summary {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.plan-view-2d__summary span {
+  padding: 0.45rem 0.75rem;
+  border: 1px solid #334155;
+  border-radius: 999px;
+  background: #1e293b;
+  color: #e5e7eb;
+  font-size: 0.85rem;
+}
+
+.plan-view-2d__chart {
+  width: 100%;
+  height: 480px;
+}
+
+@media screen and (max-width: 640px) {
+  .plan-view-2d {
+    padding: 0.75rem;
+  }
+
+  .plan-view-2d__header {
+    flex-direction: column;
+  }
+
+  .plan-view-2d__summary {
+    justify-content: flex-start;
+  }
+
+  .plan-view-2d__chart {
+    height: 380px;
+  }
+}

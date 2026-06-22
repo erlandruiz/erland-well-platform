@@ -1,0 +1,35 @@
+.view-tabs {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  gap: 0.75rem;
+  padding: 1rem 0;
+  margin-bottom: 1.5rem;
+  background: #0f172a;
+  overflow-x: auto;
+  white-space: nowrap;
+  scrollbar-width: thin;
+}
+
+.view-tabs__button {
+  flex: 0 0 auto;
+  padding: 0.7rem 1rem;
+  border: 1px solid #334155;
+  border-radius: 999px;
+  background: #1e293b;
+  color: #cbd5e1;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.view-tabs__button:hover {
+  background: #334155;
+  color: #f8fafc;
+}
+
+.view-tabs__button--active {
+  border-color: #38bdf8;
+  background: #0ea5e9;
+  color: #ffffff;
+}
