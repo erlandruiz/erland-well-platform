@@ -88,6 +88,7 @@ function SurveyInput({ surveys, onChangeSurveys, unitSystem }) {
                     step="0.01"
                     inputMode="decimal"
                     value={station.md}
+                    onFocus={(event) => event.currentTarget.select()}
                     onWheel={(event) => event.currentTarget.blur()}
                     onChange={(event) =>
                       updateStation(index, "md", event.target.value)
@@ -101,6 +102,7 @@ function SurveyInput({ surveys, onChangeSurveys, unitSystem }) {
                     step="0.01"
                     inputMode="decimal"
                     value={station.inc}
+                    onFocus={(event) => event.currentTarget.select()}
                     onWheel={(event) => event.currentTarget.blur()}
                     onChange={(event) =>
                       updateStation(index, "inc", event.target.value)
@@ -114,6 +116,7 @@ function SurveyInput({ surveys, onChangeSurveys, unitSystem }) {
                     step="0.01"
                     inputMode="decimal"
                     value={station.azi}
+                    onFocus={(event) => event.currentTarget.select()}
                     onWheel={(event) => event.currentTarget.blur()}
                     onChange={(event) =>
                       updateStation(index, "azi", event.target.value)
