@@ -1,5 +1,7 @@
 .app {
-  min-height: 100vh;
+    min-height: 100vh;
+  max-width: 100vw;
+  overflow-x: hidden;
   padding: 2rem;
   background: #0f172a;
   color: #e5e7eb;

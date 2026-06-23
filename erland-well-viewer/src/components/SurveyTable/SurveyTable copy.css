@@ -23,18 +23,12 @@
   display: block;
   width: 100%;
   max-width: 100%;
-
-  /* Esto crea un panel interno */
-  max-height: calc(100vh - 260px);
-
-  /* Ahora el scroll vertical y horizontal viven dentro del panel */
-  overflow-x: auto;
-  overflow-y: auto;
-
+  overflow-x: scroll !important;
+  overflow-y: hidden;
   border: 1px solid #334155;
   border-radius: 12px;
   background: #0f172a;
-
+  padding-bottom: 0.25rem;
   scrollbar-width: auto;
   scrollbar-color: #64748b #020617;
 }
@@ -59,13 +53,6 @@
   font-size: 0.85rem;
 }
 
-.survey-table__th {
-  position: sticky;
-  top: 0;
-  z-index: 5;
-  background: #111827;
-}
-
 .survey-table__th span {
   display: inline-block;
   margin-top: 0.2rem;
@@ -80,13 +67,12 @@
 }
 
 .survey-table__table-wrapper::-webkit-scrollbar {
-   width: 12px;
-  height: 12px;
+  height: 14px;
 }
 
 .survey-table__table-wrapper::-webkit-scrollbar-track {
   background: #020617;
-  /* border-radius: 999px; */
+  border-radius: 999px;
 }
 
 .survey-table__table-wrapper::-webkit-scrollbar-thumb {
