@@ -1,5 +1,36 @@
 # Changelog
 
+## [0.2.0] - Vertical Section from Core
+
+**Español:**  
+Se actualizó el viewer para usar el cálculo de Vertical Section desde `erland-well-core`.
+
+**English:**  
+Updated the viewer to use Vertical Section calculation from `erland-well-core`.
+
+### Cambiado / Changed
+
+- El viewer ahora usa `calculateTrajectoryWithVerticalSection()` desde `erland-well-core`.
+- The viewer now uses `calculateTrajectoryWithVerticalSection()` from `erland-well-core`.
+
+- La vista vertical ya no calcula Vertical Section manualmente.
+- The vertical view no longer calculates Vertical Section manually.
+
+### Agregado / Added
+
+- Nueva columna `Vertical Section` en la tabla de resultados.
+- New `Vertical Section` column in the results table.
+
+### Notas / Notes
+
+**Español:**  
+Este cambio mejora la separación entre lógica técnica y visualización.
+
+**English:**  
+This change improves the separation between technical logic and visualization.
+
+
+
 ## [0.1.0] - Initial Viewer Version
 
 **Español:**  

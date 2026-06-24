@@ -7,7 +7,7 @@
   "private": true,
   "scripts": {
     "test": "vitest",
-     "example:basic": "node examples/basicSurvey.js"
+    "example:basic": "node examples/basicSurvey.js"
   },
   "keywords": [
     "directional-drilling",
