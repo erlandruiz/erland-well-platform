@@ -359,6 +359,183 @@ npm test
 
 ---
 
+## Planned vs Actual Comparison / Comparación Plan vs Real
+
+**Español:**
+`erland-well-core` permite comparar una trayectoria real contra una trayectoria propuesta usando interpolación por MD real.
+
+**English:**
+`erland-well-core` allows comparing an actual trajectory against a planned trajectory using interpolation by actual MD.
+
+---
+
+## Why interpolation is needed / Por qué se necesita interpolación
+
+**Español:**
+En un pozo real, los surveys reales normalmente no coinciden exactamente con los surveys propuestos.
+
+**English:**
+In an actual well, actual survey stations usually do not exactly match planned survey stations.
+
+Ejemplo / Example:
+
+```txt
+Planned Well:
+MD 1000
+MD 1100
+MD 1200
+
+Actual Survey:
+MD 947.35
+MD 1068.20
+MD 1189.70
+```
+
+**Español:**
+Por eso, el core toma cada MD real e interpola la trayectoria propuesta en ese mismo MD.
+
+**English:**
+For that reason, the core takes each actual MD and interpolates the planned trajectory at that same MD.
+
+```txt
+Actual MD 1068.20
+vs
+Planned interpolated at MD 1068.20
+```
+
+---
+
+## Recommended Flow / Flujo recomendado
+
+**Español:**
+El flujo recomendado es calcular primero ambas trayectorias y luego compararlas.
+
+**English:**
+The recommended flow is to calculate both trajectories first and then compare them.
+
+```js
+import {
+  calculateTrajectoryWithVerticalSection,
+  comparePlannedActualByInterpolatedMd,
+} from "erland-well-core";
+
+const plannedSurveys = [
+  { md: 0, inc: 0, azi: 0 },
+  { md: 1000, inc: 10, azi: 90 },
+  { md: 2000, inc: 20, azi: 90 },
+  { md: 3000, inc: 30, azi: 90 },
+];
+
+const actualSurveys = [
+  { md: 0, inc: 0, azi: 0 },
+  { md: 947.35, inc: 11.2, azi: 91.5 },
+  { md: 1888.7, inc: 19.4, azi: 88.8 },
+  { md: 2765.45, inc: 31.1, azi: 92.2 },
+];
+
+const options = {
+  dlsCourseLength: 100,
+  verticalSectionDirection: 90,
+};
+
+const plannedTrajectory = calculateTrajectoryWithVerticalSection(
+  plannedSurveys,
+  options,
+);
+
+const actualTrajectory = calculateTrajectoryWithVerticalSection(
+  actualSurveys,
+  options,
+);
+
+const comparison = comparePlannedActualByInterpolatedMd(
+  plannedTrajectory,
+  actualTrajectory,
+);
+
+console.log(comparison);
+```
+
+---
+
+## Compared Values / Valores comparados
+
+**Español:**
+La comparación calcula diferencias entre la trayectoria real y la trayectoria propuesta interpolada.
+
+**English:**
+The comparison calculates differences between the actual trajectory and the interpolated planned trajectory.
+
+```txt
+deltaInc
+deltaAzi
+deltaTvd
+deltaNorth
+deltaEast
+deltaVerticalSection
+deltaDls
+deltaClosureDistance
+```
+
+También conserva:
+
+It also keeps:
+
+```txt
+planned
+actual
+plannedWasInterpolated
+deltas
+```
+
+---
+
+## Azimuth Difference / Diferencia de Azimuth
+
+**Español:**
+El azimuth se compara usando la diferencia angular más corta.
+
+**English:**
+Azimuth is compared using the shortest angular difference.
+
+Ejemplo / Example:
+
+```txt
+Actual AZI = 1°
+Planned AZI = 359°
+Delta AZI = +2°
+```
+
+Esto evita resultados incorrectos como:
+
+This avoids incorrect results such as:
+
+```txt
+1° - 359° = -358°
+```
+
+---
+
+## Version / Versión
+
+```txt
+erland-well-core v0.3.0
+```
+
+### Current capabilities / Capacidades actuales
+
+* Minimum Curvature calculation.
+
+* Cálculo por Minimum Curvature.
+
+* Vertical Section calculation.
+
+* Cálculo de Vertical Section.
+
+* Planned vs Actual comparison using interpolated planned trajectory.
+
+* Comparación Plan vs Real usando trayectoria propuesta interpolada.
+---
 
 ## Autor / Author
 

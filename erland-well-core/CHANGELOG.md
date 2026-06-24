@@ -1,4 +1,108 @@
 # Changelog
+
+## [0.3.0] - Planned vs Actual Interpolated Comparison
+
+**Español:**
+Se agregó soporte inicial para comparar una trayectoria real contra una trayectoria propuesta usando interpolación por MD real.
+
+**English:**
+Added initial support for comparing an actual trajectory against a planned trajectory using interpolation by actual MD.
+
+### Agregado / Added
+
+* Nueva función `comparePlannedActualByInterpolatedMd()`.
+
+* New function `comparePlannedActualByInterpolatedMd()`.
+
+* Nueva función `interpolateTrajectoryAtMd()`.
+
+* New function `interpolateTrajectoryAtMd()`.
+
+* Nuevas utilidades angulares:
+
+* New angle utilities:
+
+  * `normalizeAngleDeg()`
+  * `calculateAngleDifferenceDeg()`
+  * `interpolateAngleDeg()`
+
+* Interpolación del pozo propuesto al MD de cada estación real.
+
+* Interpolation of the planned well at each actual survey station MD.
+
+* Comparación de resultados calculados entre trayectoria real y trayectoria propuesta interpolada.
+
+* Comparison of calculated results between actual trajectory and interpolated planned trajectory.
+
+### Campos comparados / Compared Fields
+
+La comparación permite calcular diferencias para:
+
+The comparison can calculate differences for:
+
+* `deltaInc`
+* `deltaAzi`
+* `deltaTvd`
+* `deltaNorth`
+* `deltaEast`
+* `deltaVerticalSection`
+* `deltaDls`
+* `deltaClosureDistance`
+
+También conserva los valores calculados de cada estación:
+
+It also preserves the calculated values for each station:
+
+* `deltaMd`
+* `doglegDeg`
+* `doglegRad`
+* `ratioFactor`
+* `deltaTvd`
+* `tvd`
+* `deltaNorth`
+* `north`
+* `deltaEast`
+* `east`
+* `verticalSection`
+* `dls`
+
+### Mejorado / Improved
+
+* El cálculo de diferencia de azimuth ahora usa la diferencia angular más corta.
+* Azimuth difference now uses the shortest angular difference.
+
+Ejemplo / Example:
+
+```txt
+Actual AZI = 1°
+Planned AZI = 359°
+Delta AZI = +2°
+```
+
+Esto evita resultados incorrectos como:
+
+This avoids incorrect results such as:
+
+```txt
+1° - 359° = -358°
+```
+
+### Notas / Notes
+
+**Español:**
+Esta versión está pensada para casos reales donde los surveys del pozo real no coinciden exactamente con los surveys del pozo propuesto.
+
+**English:**
+This version is designed for real cases where actual survey stations do not exactly match planned survey stations.
+
+**Español:**
+El flujo recomendado es calcular primero ambas trayectorias usando `calculateTrajectoryWithVerticalSection()` y luego comparar con `comparePlannedActualByInterpolatedMd()`.
+
+**English:**
+The recommended flow is to first calculate both trajectories using `calculateTrajectoryWithVerticalSection()` and then compare them with `comparePlannedActualByInterpolatedMd()`.
+
+
+
 ## [0.2.0] - Vertical Section Support
 
 **Español:**  

@@ -1,10 +1,16 @@
 {
   "name": "erland-well-core",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Librería JavaScript para cálculos de pozos direccionales usando Minimum Curvature",
   "type": "module",
   "main": "src/index.js",
   "private": true,
+  "files": [
+    "src",
+    "examples",
+    "README.md",
+    "CHANGELOG.md"
+  ],
   "scripts": {
     "test": "vitest",
     "example:basic": "node examples/basicSurvey.js"
