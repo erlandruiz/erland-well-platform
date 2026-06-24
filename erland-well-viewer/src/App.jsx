@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { calculateMinimumCurvature } from "erland-well-core";
+import { calculateTrajectoryWithVerticalSection } from "erland-well-core";
 
 import Navbar from "./components/Navbar/Navbar";
 import ViewTabs from "./components/ViewTabs/ViewTabs";
@@ -54,8 +54,9 @@ function App() {
 
   const calculation = useMemo(() => {
     try {
-      const results = calculateMinimumCurvature(surveys, {
+      const results = calculateTrajectoryWithVerticalSection(surveys, {
         dlsCourseLength: unitConfig.dlsCourseLength,
+        verticalSectionDirection,
       });
 
       return {
@@ -68,7 +69,7 @@ function App() {
         error: error.message,
       };
     }
-  }, [surveys, unitConfig.dlsCourseLength]);
+  }, [surveys, unitConfig.dlsCourseLength, verticalSectionDirection]);
 
   useEffect(() => {
     const projectToSave = {

@@ -12,7 +12,6 @@ function VerticalView2D({
   const unitConfig = getUnitConfig(unitSystem);
 
   const directionNumber = Number(verticalSectionDirection) || 0;
-  const directionRad = (directionNumber * Math.PI) / 180;
 
   const mdValues = results.map((row) => row.md);
   const maxMd = Math.max(...mdValues, 0);
@@ -21,22 +20,14 @@ function VerticalView2D({
   const firstStation = results[0];
   const lastStation = results[results.length - 1];
 
-  const verticalSectionValues = results.map(
-    (row) =>
-      row.north * Math.cos(directionRad) +
-      row.east * Math.sin(directionRad)
-  );
+  const verticalSectionValues = results.map((row) => row.verticalSection);
 
   const tvdValues = results.map((row) => row.tvd);
 
-  const lastVerticalSection =
-    (lastStation?.north ?? 0) * Math.cos(directionRad) +
-    (lastStation?.east ?? 0) * Math.sin(directionRad);
+  const lastVerticalSection = lastStation?.verticalSection ?? 0;
 
   const hoverText = results.map((row, index) => {
-    const verticalSection =
-      row.north * Math.cos(directionRad) +
-      row.east * Math.sin(directionRad);
+    const verticalSection = row.verticalSection;
 
     return (
       `Station: ${index + 1}<br>` +
@@ -45,11 +36,11 @@ function VerticalView2D({
       `AZI: ${formatFixed(row.azi, 2)} ${unitConfig.angleUnit}<br>` +
       `Vertical Section Direction: ${formatFixed(
         directionNumber,
-        2
+        2,
       )} ${unitConfig.angleUnit}<br>` +
       `Vertical Section: ${formatFixed(
         verticalSection,
-        15
+        15,
       )} ${unitConfig.lengthUnit}<br>` +
       `TVD: ${formatFixed(row.tvd, 15)} ${unitConfig.lengthUnit}<br>` +
       `North: ${formatFixed(row.north, 15)} ${unitConfig.lengthUnit}<br>` +
@@ -89,8 +80,7 @@ function VerticalView2D({
 
           <div className="vertical-view-2d__summary">
             <span>
-              TD: {formatFixed(lastStation?.md ?? 0, 2)}{" "}
-              {unitConfig.lengthUnit}
+              TD: {formatFixed(lastStation?.md ?? 0, 2)} {unitConfig.lengthUnit}
             </span>
             <span>
               VS at TD: {formatFixed(lastVerticalSection, 2)}{" "}
@@ -176,7 +166,7 @@ function VerticalView2D({
           title: {
             text: `Vertical Section vs TVD - Direction ${formatFixed(
               directionNumber,
-              2
+              2,
             )}°`,
           },
           xaxis: {
