@@ -1,4 +1,34 @@
 # Changelog
+## [0.2.0] - Vertical Section Support
+
+**Español:**  
+Se agregó soporte para cálculo de Vertical Section dentro del core.
+
+**English:**  
+Added support for Vertical Section calculation inside the core.
+
+### Agregado / Added
+
+- Nueva función `calculateVerticalSection()`.
+- New function `calculateVerticalSection()`.
+
+- Nueva función `calculateTrajectoryWithVerticalSection()`.
+- New function `calculateTrajectoryWithVerticalSection()`.
+
+- Cálculo de Vertical Section usando North, East y Vertical Section Direction.
+- Vertical Section calculation using North, East, and Vertical Section Direction.
+
+- Pruebas unitarias para `calculateVerticalSection()`.
+- Unit tests for `calculateVerticalSection()`.
+
+- Pruebas unitarias para `calculateTrajectoryWithVerticalSection()`.
+- Unit tests for `calculateTrajectoryWithVerticalSection()`.
+
+### Fórmula / Formula
+
+```txt
+VS = North * cos(direction) + East * sin(direction)
+```
 
 ## [0.1.0] - Initial Core Version
 

@@ -35,3 +35,7 @@ export {
 export {
   calculateDls,
 } from "./trajectory/dls.js";
+
+export { calculateVerticalSection } from "./trajectory/verticalSection.js";
+
+export { calculateTrajectoryWithVerticalSection } from "./trajectory/trajectoryWithVerticalSection.js";
