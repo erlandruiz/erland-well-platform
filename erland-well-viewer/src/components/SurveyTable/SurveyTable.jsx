@@ -92,6 +92,12 @@ function SurveyTable({ results, unitSystem }) {
               </th>
 
               <th className="survey-table__th">
+                Vertical Section
+                <br />
+                <span>{unitConfig.lengthUnit}</span>
+              </th>
+
+              <th className="survey-table__th">
                 DLS
                 <br />
                 <span>{unitConfig.dlsUnit}</span>
@@ -124,9 +130,7 @@ function SurveyTable({ results, unitSystem }) {
                   {formatFixed(row.deltaTvd, 15)}
                 </td>
 
-                <td className="survey-table__td">
-                  {formatFixed(row.tvd, 15)}
-                </td>
+                <td className="survey-table__td">{formatFixed(row.tvd, 15)}</td>
 
                 <td className="survey-table__td">
                   {formatFixed(row.deltaNorth, 15)}
@@ -145,8 +149,10 @@ function SurveyTable({ results, unitSystem }) {
                 </td>
 
                 <td className="survey-table__td">
-                  {formatFixed(row.dls, 15)}
+                  {formatFixed(row.verticalSection, 15)}
                 </td>
+
+                <td className="survey-table__td">{formatFixed(row.dls, 15)}</td>
               </tr>
             ))}
           </tbody>
