@@ -10,33 +10,30 @@
 
 .survey-table__title {
   margin: 0 0 0.5rem;
-  color: #93c5fd;
+  color: var(--color-primary);
   font-size: 1.2rem;
 }
 
 .survey-table__description {
   margin: 0;
-  color: #cbd5e1;
+  color: var(--color-text-soft);
 }
 
 .survey-table__table-wrapper {
   display: block;
   width: 100%;
   max-width: 100%;
-
-  /* Esto crea un panel interno */
   max-height: calc(100vh - 260px);
-
-  /* Ahora el scroll vertical y horizontal viven dentro del panel */
   overflow-x: auto;
   overflow-y: auto;
-
-  border: 1px solid #334155;
-  border-radius: 12px;
-  background: #0f172a;
-
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  background:
+    linear-gradient(180deg, rgba(56, 189, 248, 0.04), transparent 18rem),
+    linear-gradient(180deg, var(--color-surface-soft), var(--color-surface));
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.18);
   scrollbar-width: auto;
-  scrollbar-color: #64748b #020617;
+  scrollbar-color: var(--color-muted) var(--color-bg);
 }
 
 .survey-table__table {
@@ -48,55 +45,54 @@
 .survey-table__th,
 .survey-table__td {
   padding: 0.75rem;
-  border-bottom: 1px solid #334155;
+  border-bottom: 1px solid var(--color-border-soft);
   text-align: right;
   white-space: nowrap;
-}
-
-.survey-table__th {
-  background: #111827;
-  color: #f8fafc;
-  font-size: 0.85rem;
 }
 
 .survey-table__th {
   position: sticky;
   top: 0;
   z-index: 5;
-  background: #111827;
+  background: linear-gradient(180deg, var(--color-bg-soft), var(--color-surface));
+  color: var(--color-text);
+  font-size: 0.85rem;
 }
 
 .survey-table__th span {
   display: inline-block;
   margin-top: 0.2rem;
-  color: #94a3b8;
+  color: var(--color-muted);
   font-size: 0.75rem;
   font-weight: 400;
 }
 
 .survey-table__td {
-  color: #e5e7eb;
+  color: var(--color-text);
   font-size: 0.85rem;
 }
 
+.survey-table__table tbody tr:hover {
+  background: rgba(56, 189, 248, 0.05);
+}
+
 .survey-table__table-wrapper::-webkit-scrollbar {
-   width: 12px;
+  width: 12px;
   height: 12px;
 }
 
 .survey-table__table-wrapper::-webkit-scrollbar-track {
-  background: #020617;
-  /* border-radius: 999px; */
+  background: var(--color-bg);
 }
 
 .survey-table__table-wrapper::-webkit-scrollbar-thumb {
-  border: 3px solid #020617;
+  border: 3px solid var(--color-bg);
   border-radius: 999px;
-  background: #64748b;
+  background: var(--color-muted);
 }
 
 .survey-table__table-wrapper::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: var(--color-text-soft);
 }
 
 @media screen and (max-width: 640px) {

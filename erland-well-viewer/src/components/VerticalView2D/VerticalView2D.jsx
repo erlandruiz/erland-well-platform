@@ -164,10 +164,15 @@ function VerticalView2D({
         layout={{
           autosize: true,
           title: {
-            text: `Vertical Section vs TVD - Direction ${formatFixed(
+            text: `Vertical Section vs TVD<br><sup>Direction ${formatFixed(
               directionNumber,
               2,
-            )}°`,
+            )}°</sup>`,
+            x: 0.5,
+            xanchor: "center",
+            font: {
+              size: 14,
+            },
           },
           xaxis: {
             title: {

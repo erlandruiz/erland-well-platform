@@ -1,3 +1,40 @@
+:root {
+  /* ==============================
+     Erland Well Viewer Theme v0.3.0
+     Tema visual industrial / drilling dashboard
+     ============================== */
+
+  --color-bg: #06111f;
+  --color-bg-soft: #0b1b2e;
+
+  --color-surface: #10243a;
+  --color-surface-soft: #15324f;
+
+  --color-primary: #38bdf8;
+  --color-primary-soft: rgba(56, 189, 248, 0.16);
+
+  --color-accent: #f59e0b;
+  --color-accent-soft: rgba(245, 158, 11, 0.18);
+
+  --color-text: #e5edf5;
+  --color-text-soft: #cbd5e1;
+  --color-muted: #94a3b8;
+
+  --color-border: #244766;
+  --color-border-soft: rgba(148, 163, 184, 0.24);
+
+  --color-danger: #ef4444;
+  --color-danger-bg: #450a0a;
+  --color-danger-border: #991b1b;
+  --color-danger-text: #fecaca;
+
+  /* Colores técnicos para futuro Planned vs Actual */
+  --color-planned: #38bdf8;
+  --color-actual: #f59e0b;
+  --color-warning: #f97316;
+  --color-success: #22c55e;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -11,8 +48,10 @@ body {
   min-width: 320px;
   min-height: 100vh;
   font-family: Arial, sans-serif;
-  background: #0f172a;
-  color: #e5e7eb;
+  background:
+    radial-gradient(circle at top left, rgba(56, 189, 248, 0.12), transparent 32rem),
+    linear-gradient(135deg, var(--color-bg), var(--color-bg-soft));
+  color: var(--color-text);
 }
 
 button,

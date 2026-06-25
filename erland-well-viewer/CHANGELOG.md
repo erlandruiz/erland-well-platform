@@ -1,5 +1,76 @@
 # Changelog
 
+## [0.3.0] - Visual Theme Update
+
+**Español:**
+Se actualizó la interfaz visual del viewer con una nueva paleta de colores tipo dashboard técnico/industrial.
+
+**English:**
+Updated the viewer interface with a new technical/industrial dashboard color palette.
+
+### Agregado / Added
+
+* Nueva paleta visual basada en variables CSS.
+
+* New visual palette based on CSS variables.
+
+* Variables globales de tema en `src/styles/global.css`.
+
+* Global theme variables in `src/styles/global.css`.
+
+* Colores preparados para futuras vistas `Planned vs Actual`.
+
+* Colors prepared for future `Planned vs Actual` views.
+
+### Mejorado / Improved
+
+* Nuevo estilo visual para `Navbar`.
+
+* New visual style for `Navbar`.
+
+* Nuevo estilo visual para `ViewTabs`.
+
+* New visual style for `ViewTabs`.
+
+* Nuevo estilo visual para `SurveyInput`.
+
+* New visual style for `SurveyInput`.
+
+* Nuevo estilo visual para `SurveyTable`.
+
+* New visual style for `SurveyTable`.
+
+* Nuevo estilo visual para `VerticalView2D`.
+
+* New visual style for `VerticalView2D`.
+
+* Nuevo estilo visual para `PlanView2D`.
+
+* New visual style for `PlanView2D`.
+
+* Nuevo estilo visual para `WellPath3D`.
+
+* New visual style for `WellPath3D`.
+
+### Corregido / Fixed
+
+* Se ajustó el título del gráfico `VerticalView2D` para evitar que se corte en pantallas pequeñas como iPhone 12 Pro.
+* Adjusted the `VerticalView2D` chart title to prevent clipping on small screens such as iPhone 12 Pro.
+
+### Notas / Notes
+
+**Español:**
+Esta versión mejora la presentación visual del viewer para que sea más clara, moderna y profesional al mostrarlo a clientes.
+
+**English:**
+This version improves the viewer’s visual presentation, making it clearer, more modern, and more professional when presenting it to clients.
+
+**Español:**
+La estructura con variables CSS deja preparada la base para una futura opción de selección de paletas por pozo o por cliente.
+
+**English:**
+The CSS variable structure prepares the foundation for a future palette selector by well or by client.
+
 ## [0.2.0] - Vertical Section from Core
 
 **Español:**  

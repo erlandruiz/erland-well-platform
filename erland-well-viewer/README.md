@@ -484,6 +484,99 @@ The vertical view currently calculates Vertical Section inside the viewer. In a 
 
 ---
 
+## Visual Theme v0.3.0 / Tema visual v0.3.0
+
+**Español:**
+En la versión `0.3.0`, `erland-well-viewer` actualiza su interfaz con una paleta visual más técnica, moderna e industrial.
+
+**English:**
+In version `0.3.0`, `erland-well-viewer` updates its interface with a more technical, modern, and industrial visual palette.
+
+---
+
+## Theme System / Sistema de tema
+
+**Español:**
+La aplicación ahora usa variables CSS globales para manejar colores principales, fondos, bordes, textos y estados visuales.
+
+**English:**
+The application now uses global CSS variables to manage primary colors, backgrounds, borders, text colors, and visual states.
+
+Archivo principal / Main file:
+
+```txt id="wz6ndm"
+src/styles/global.css
+```
+
+Ejemplo / Example:
+
+```css id="vij4cf"
+:root {
+  --color-bg: #06111f;
+  --color-surface: #10243a;
+  --color-primary: #38bdf8;
+  --color-accent: #f59e0b;
+  --color-text: #e5edf5;
+  --color-border: #244766;
+}
+```
+
+---
+
+## Updated Components / Componentes actualizados
+
+**Español:**
+La nueva paleta visual fue aplicada a los principales componentes del viewer.
+
+**English:**
+The new visual palette was applied to the main viewer components.
+
+```txt id="126rf9"
+Navbar
+ViewTabs
+SurveyInput
+SurveyTable
+VerticalView2D
+PlanView2D
+WellPath3D
+```
+
+---
+
+## Mobile Improvements / Mejoras móviles
+
+**Español:**
+Se ajustó el título del gráfico de `VerticalView2D` para evitar cortes visuales en pantallas pequeñas como iPhone 12 Pro.
+
+**English:**
+The `VerticalView2D` chart title was adjusted to avoid visual clipping on small screens such as iPhone 12 Pro.
+
+---
+
+## Future Palette Selector / Futuro selector de paletas
+
+**Español:**
+La estructura actual prepara el camino para una futura opción donde cada pozo o cliente pueda tener su propia paleta visual.
+
+**English:**
+The current structure prepares the way for a future option where each well or client can have its own visual palette.
+
+Ejemplo / Example:
+
+```txt id="3ma2nh"
+Well A / Pozo A → Blue palette / Paleta azul
+Well B / Pozo B → Green palette / Paleta verde
+Well C / Pozo C → Orange palette / Paleta naranja
+```
+
+**Español:**
+Esto puede ayudar a identificar visualmente distintos pozos en operación, especialmente cuando una empresa trabaja con varios pozos en diferentes zonas.
+
+**English:**
+This can help visually identify different wells in operation, especially when a company works with several wells in different locations.
+
+---
+
 ## Autor / Author
 
 Erland Ruiz Rivera
