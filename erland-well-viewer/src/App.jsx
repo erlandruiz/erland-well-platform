@@ -180,11 +180,9 @@ function App() {
    */
 
   const shouldShowTrajectoryDisplayMode =
-    activeView === "plan" || activeView === "vertical";
-  // const shouldShowTrajectoryDisplayMode =
-  //   activeView === "plan" ||
-  //   activeView === "vertical" ||
-  //   activeView === "threeD";
+    activeView === "plan" ||
+    activeView === "vertical" ||
+    activeView === "threeD";
 
   useEffect(() => {
     const projectToSave = {
@@ -262,8 +260,15 @@ function App() {
      *
      * Después podremos crear demos donde planned y actual sean diferentes.
      */
-    setPlannedSurveys(selectedDemoWell.surveys);
-    setActualSurveys(selectedDemoWell.surveys);
+    setPlannedSurveys(
+      selectedDemoWell.plannedSurveys ?? selectedDemoWell.surveys,
+    );
+
+    setActualSurveys(
+      selectedDemoWell.actualSurveys ??
+        selectedDemoWell.plannedSurveys ??
+        selectedDemoWell.surveys,
+    );
 
     setVerticalSectionDirection(selectedDemoWell.verticalSectionDirection);
     setTrajectoryDisplayMode(TRAJECTORY_DISPLAY_MODES.BOTH);
@@ -337,7 +342,12 @@ function App() {
       )}
 
       {activeView === "threeD" && !calculation.error && (
-        <WellPath3D results={calculation.results} unitSystem={unitSystem} />
+        <WellPath3D
+          plannedResults={plannedCalculation.results}
+          actualResults={actualCalculation.results}
+          unitSystem={unitSystem}
+          trajectoryDisplayMode={trajectoryDisplayMode}
+        />
       )}
     </main>
   );

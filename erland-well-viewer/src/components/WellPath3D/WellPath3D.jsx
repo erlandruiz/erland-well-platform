@@ -3,22 +3,22 @@ import { formatFixed } from "erland-well-core";
 import { getUnitConfig } from "../../config/units";
 import "./WellPath3D.css";
 
-function WellPath3D({ results, unitSystem }) {
-  const unitConfig = getUnitConfig(unitSystem);
+const TRAJECTORY_DISPLAY_MODES = {
+  PLANNED: "planned",
+  ACTUAL: "actual",
+  BOTH: "both",
+};
 
-  const eastValues = results.map((row) => row.east);
-  const northValues = results.map((row) => row.north);
-  const tvdValues = results.map((row) => row.tvd);
-  const mdValues = results.map((row) => row.md);
+const TRAJECTORY_COLORS = {
+  planned: "#38bdf8",
+  actual: "#f59e0b",
+  wellhead: "#22c55e",
+};
 
-  const maxMd = Math.max(...mdValues);
-  const mdColorValues = mdValues.map((md) => -md);
-
-  const firstStation = results[0];
-  const lastStation = results[results.length - 1];
-
-  const hoverText = results.map(
+function createHoverText(results, unitConfig, label) {
+  return results.map(
     (row, index) =>
+      `${label}<br>` +
       `Station: ${index + 1}<br>` +
       `MD: ${formatFixed(row.md, 2)} ${unitConfig.lengthUnit}<br>` +
       `INC: ${formatFixed(row.inc, 2)} ${unitConfig.angleUnit}<br>` +
@@ -28,6 +28,154 @@ function WellPath3D({ results, unitSystem }) {
       `East: ${formatFixed(row.east, 15)} ${unitConfig.lengthUnit}<br>` +
       `DLS: ${formatFixed(row.dls, 15)} ${unitConfig.dlsUnit}`,
   );
+}
+
+function createTrajectoryTrace({
+  results,
+  unitConfig,
+  name,
+  color,
+  dash = "solid",
+}) {
+  return {
+    x: results.map((row) => row.east),
+    y: results.map((row) => row.north),
+    z: results.map((row) => row.tvd),
+    text: createHoverText(results, unitConfig, name),
+    type: "scatter3d",
+    mode: "lines+markers",
+    name,
+    line: {
+      width: 7,
+      color,
+      dash,
+    },
+    marker: {
+      size: 4,
+      color,
+    },
+    hovertemplate: "%{text}<extra></extra>",
+  };
+}
+
+function createTdTrace({ station, unitConfig, name, color }) {
+  if (!station) {
+    return null;
+  }
+
+  return {
+    x: [station.east],
+    y: [station.north],
+    z: [station.tvd],
+    type: "scatter3d",
+    mode: "markers+text",
+    name,
+    text: [name],
+    textposition: "bottom center",
+    marker: {
+      size: 8,
+      color,
+    },
+    hovertemplate:
+      `${name}<br>` +
+      `MD: ${formatFixed(station.md, 2)} ${unitConfig.lengthUnit}<br>` +
+      `East: %{x} ${unitConfig.lengthUnit}<br>` +
+      `North: %{y} ${unitConfig.lengthUnit}<br>` +
+      `TVD: %{z} ${unitConfig.lengthUnit}<extra></extra>`,
+  };
+}
+
+function WellPath3D({
+  results = [],
+  plannedResults,
+  actualResults,
+  unitSystem,
+  trajectoryDisplayMode = TRAJECTORY_DISPLAY_MODES.ACTUAL,
+}) {
+  const unitConfig = getUnitConfig(unitSystem);
+
+  /*
+   * Español:
+   * Compatibilidad temporal:
+   * Si App.jsx todavía envía solo `results`, usamos esos datos como trayectoria actual.
+   *
+   * English:
+   * Temporary compatibility:
+   * If App.jsx still sends only `results`, we use those data as the actual trajectory.
+   */
+  const plannedTrajectory = plannedResults ?? results;
+  const actualTrajectory = actualResults ?? results;
+
+  const showPlanned =
+    trajectoryDisplayMode === TRAJECTORY_DISPLAY_MODES.PLANNED ||
+    trajectoryDisplayMode === TRAJECTORY_DISPLAY_MODES.BOTH;
+
+  const showActual =
+    trajectoryDisplayMode === TRAJECTORY_DISPLAY_MODES.ACTUAL ||
+    trajectoryDisplayMode === TRAJECTORY_DISPLAY_MODES.BOTH;
+
+  const firstStation =
+    actualTrajectory[0] ?? plannedTrajectory[0] ?? results[0] ?? null;
+
+  const plannedLastStation = plannedTrajectory[plannedTrajectory.length - 1];
+  const actualLastStation = actualTrajectory[actualTrajectory.length - 1];
+
+  const plotData = [
+    showPlanned &&
+      plannedTrajectory.length > 0 &&
+      createTrajectoryTrace({
+        results: plannedTrajectory,
+        unitConfig,
+        name: "Planned",
+        color: TRAJECTORY_COLORS.planned,
+        dash: "dash",
+      }),
+
+    showActual &&
+      actualTrajectory.length > 0 &&
+      createTrajectoryTrace({
+        results: actualTrajectory,
+        unitConfig,
+        name: "Actual",
+        color: TRAJECTORY_COLORS.actual,
+      }),
+
+    {
+      x: [firstStation?.east ?? 0],
+      y: [firstStation?.north ?? 0],
+      z: [firstStation?.tvd ?? 0],
+      type: "scatter3d",
+      mode: "markers+text",
+      name: "Wellhead",
+      text: ["Wellhead"],
+      textposition: "top center",
+      marker: {
+        size: 8,
+        color: TRAJECTORY_COLORS.wellhead,
+      },
+      hovertemplate:
+        `Wellhead<br>` +
+        `East: %{x} ${unitConfig.lengthUnit}<br>` +
+        `North: %{y} ${unitConfig.lengthUnit}<br>` +
+        `TVD: %{z} ${unitConfig.lengthUnit}<extra></extra>`,
+    },
+
+    showPlanned &&
+      createTdTrace({
+        station: plannedLastStation,
+        unitConfig,
+        name: "TD Planned",
+        color: TRAJECTORY_COLORS.planned,
+      }),
+
+    showActual &&
+      createTdTrace({
+        station: actualLastStation,
+        unitConfig,
+        name: "TD Actual",
+        color: TRAJECTORY_COLORS.actual,
+      }),
+  ].filter(Boolean);
 
   return (
     <section className="well-path-3d">
@@ -41,90 +189,18 @@ function WellPath3D({ results, unitSystem }) {
         </div>
 
         <div className="well-path-3d__summary">
-          <span>Stations: {results.length}</span>
+          <span>Planned: {plannedTrajectory.length}</span>
+          <span>Actual: {actualTrajectory.length}</span>
+
           <span>
-            TD: {formatFixed(lastStation?.md ?? 0, 2)} {unitConfig.lengthUnit}
+            TD Actual: {formatFixed(actualLastStation?.md ?? 0, 2)}{" "}
+            {unitConfig.lengthUnit}
           </span>
         </div>
       </div>
 
       <Plot
-        data={[
-          {
-            x: eastValues,
-            y: northValues,
-            z: tvdValues,
-            text: hoverText,
-            type: "scatter3d",
-            mode: "lines+markers",
-            name: "Well Path",
-            line: {
-              width: 7,
-              color: "#38bdf8",
-            },
-
-            marker: {
-              size: 5,
-              color: mdColorValues,
-              cmin: -maxMd,
-              cmax: 0,
-              colorscale: "Viridis",
-              colorbar: {
-                title: {
-                  text: `MD (${unitConfig.lengthUnit})`,
-                },
-                tickvals: [-maxMd, -maxMd / 2, 0],
-                ticktext: [
-                  formatFixed(maxMd, 2),
-                  formatFixed(maxMd / 2, 2),
-                  "0.00",
-                ],
-              },
-            },
-            hovertemplate: "%{text}<extra></extra>",
-          },
-          {
-            x: [firstStation?.east ?? 0],
-            y: [firstStation?.north ?? 0],
-            z: [firstStation?.tvd ?? 0],
-            type: "scatter3d",
-            mode: "markers+text",
-            name: "Wellhead",
-            text: ["Wellhead"],
-            textposition: "top center",
-            marker: {
-              size: 8,
-              color: "#22c55e",
-            },
-            hovertemplate:
-              `Wellhead<br>` +
-              `East: %{x} ${unitConfig.lengthUnit}<br>` +
-              `North: %{y} ${unitConfig.lengthUnit}<br>` +
-              `TVD: %{z} ${unitConfig.lengthUnit}<extra></extra>`,
-          },
-          {
-            x: [lastStation?.east ?? 0],
-            y: [lastStation?.north ?? 0],
-            z: [lastStation?.tvd ?? 0],
-            type: "scatter3d",
-            mode: "markers+text",
-            name: "TD",
-            text: ["TD"],
-            textposition: "bottom center",
-            marker: {
-              size: 8,
-              color: "#f97316",
-            },
-            hovertemplate:
-              `TD<br>` +
-              `MD: ${formatFixed(lastStation?.md ?? 0, 2)} ${
-                unitConfig.lengthUnit
-              }<br>` +
-              `East: %{x} ${unitConfig.lengthUnit}<br>` +
-              `North: %{y} ${unitConfig.lengthUnit}<br>` +
-              `TVD: %{z} ${unitConfig.lengthUnit}<extra></extra>`,
-          },
-        ]}
+        data={plotData}
         layout={{
           autosize: true,
           title: {

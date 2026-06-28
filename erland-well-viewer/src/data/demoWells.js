@@ -2,2593 +2,2682 @@
 // Modelos demo para Erland Well Viewer
 // Generated from the Excel survey files supplied by Erland.
 
-export const DEMO_WELLS = [
+/*
+ * Español:
+ * Redondea los valores demo para que la data siga siendo legible
+ * en las tablas de entrada.
+ *
+ * English:
+ * Rounds demo values so the data remains readable
+ * in the input tables.
+ */
+function roundSurveyValue(value) {
+  return Number(value.toFixed(2));
+}
+
+function clamp(value, min, max) {
+  return Math.min(Math.max(value, min), max);
+}
+
+function normalizeAzimuth(azi) {
+  return ((azi % 360) + 360) % 360;
+}
+
+/*
+ * Español:
+ * Genera una trayectoria real demo a partir del plan.
+ * La diferencia es intencionalmente pequeña para que ambas líneas se vean
+ * separadas, pero sigan siendo cercanas.
+ *
+ * English:
+ * Generates a demo actual trajectory from the plan.
+ * The difference is intentionally small so both lines are visible
+ * but still close to each other.
+ */
+function createDemoActualSurveys(surveys, unitSystem) {
+  const lastSurvey = surveys[surveys.length - 1];
+  const maxMd = lastSurvey?.md ?? 0;
+
+  const mdAmplitude = unitSystem === "feet" ? 2.5 : 0.8;
+  const incAmplitude = unitSystem === "feet" ? 0.45 : 0.35;
+  const aziAmplitude = unitSystem === "feet" ? 0.9 : -0.75;
+
+  return surveys.map((station, index) => {
+    if (index === 0 || station.inc === 0 || maxMd === 0) {
+      return { ...station };
+    }
+
+    const progress = station.md / maxMd;
+    const softStart = Math.min(progress / 0.15, 1);
+
+    const mdOffset =
+      index === surveys.length - 1
+        ? 0
+        : mdAmplitude *
+          softStart *
+          Math.sin(progress * Math.PI) *
+          Math.sin(index * 0.35);
+
+    const incOffset =
+      incAmplitude * softStart * Math.sin(progress * Math.PI * 0.9);
+
+    const aziOffset =
+      aziAmplitude *
+      softStart *
+      (0.65 + 0.35 * Math.sin(progress * Math.PI * 2));
+
+    return {
+      md: roundSurveyValue(station.md + mdOffset),
+      inc: roundSurveyValue(clamp(station.inc + incOffset, 0, 179.99)),
+      azi: roundSurveyValue(normalizeAzimuth(station.azi + aziOffset)),
+    };
+  });
+}
+
+const BASE_DEMO_WELLS = [
   {
-    "id": "pozo-12000-ft",
-    "name": "Pozo Modelo 12000 ft",
-    "description": "Modelo demo en pies con Vertical Section Direction de 68°.",
-    "unitSystem": "feet",
-    "verticalSectionDirection": 68,
-    "surveys": [
+    id: "pozo-12000-ft",
+    name: "Pozo Modelo 12000 ft",
+    description: "Modelo demo en pies con Vertical Section Direction de 68°.",
+    unitSystem: "feet",
+    verticalSectionDirection: 68,
+    surveys: [
       {
-        "md": 0,
-        "inc": 0,
-        "azi": 0
+        md: 0,
+        inc: 0,
+        azi: 0,
       },
       {
-        "md": 30,
-        "inc": 0,
-        "azi": 0
+        md: 30,
+        inc: 0,
+        azi: 0,
       },
       {
-        "md": 60,
-        "inc": 0,
-        "azi": 0
+        md: 60,
+        inc: 0,
+        azi: 0,
       },
       {
-        "md": 90,
-        "inc": 0,
-        "azi": 0
+        md: 90,
+        inc: 0,
+        azi: 0,
       },
       {
-        "md": 120,
-        "inc": 0,
-        "azi": 0
+        md: 120,
+        inc: 0,
+        azi: 0,
       },
       {
-        "md": 150,
-        "inc": 0,
-        "azi": 0
+        md: 150,
+        inc: 0,
+        azi: 0,
       },
       {
-        "md": 180,
-        "inc": 0,
-        "azi": 0
+        md: 180,
+        inc: 0,
+        azi: 0,
       },
       {
-        "md": 210,
-        "inc": 0,
-        "azi": 0
+        md: 210,
+        inc: 0,
+        azi: 0,
       },
       {
-        "md": 240,
-        "inc": 0,
-        "azi": 0
+        md: 240,
+        inc: 0,
+        azi: 0,
       },
       {
-        "md": 270,
-        "inc": 0,
-        "azi": 0
+        md: 270,
+        inc: 0,
+        azi: 0,
       },
       {
-        "md": 300,
-        "inc": 0,
-        "azi": 0
+        md: 300,
+        inc: 0,
+        azi: 0,
       },
       {
-        "md": 330,
-        "inc": 0,
-        "azi": 0
+        md: 330,
+        inc: 0,
+        azi: 0,
       },
       {
-        "md": 360,
-        "inc": 0,
-        "azi": 0
+        md: 360,
+        inc: 0,
+        azi: 0,
       },
       {
-        "md": 390,
-        "inc": 0,
-        "azi": 0
+        md: 390,
+        inc: 0,
+        azi: 0,
       },
       {
-        "md": 420,
-        "inc": 0,
-        "azi": 0
+        md: 420,
+        inc: 0,
+        azi: 0,
       },
       {
-        "md": 450,
-        "inc": 0,
-        "azi": 0
+        md: 450,
+        inc: 0,
+        azi: 0,
       },
       {
-        "md": 480,
-        "inc": 0,
-        "azi": 0
+        md: 480,
+        inc: 0,
+        azi: 0,
       },
       {
-        "md": 510,
-        "inc": 0.33,
-        "azi": 68
+        md: 510,
+        inc: 0.33,
+        azi: 68,
       },
       {
-        "md": 540,
-        "inc": 0.66,
-        "azi": 68
+        md: 540,
+        inc: 0.66,
+        azi: 68,
       },
       {
-        "md": 570,
-        "inc": 0.99,
-        "azi": 68
+        md: 570,
+        inc: 0.99,
+        azi: 68,
       },
       {
-        "md": 600,
-        "inc": 1.32,
-        "azi": 68
+        md: 600,
+        inc: 1.32,
+        azi: 68,
       },
       {
-        "md": 630,
-        "inc": 1.65,
-        "azi": 68
+        md: 630,
+        inc: 1.65,
+        azi: 68,
       },
       {
-        "md": 660,
-        "inc": 1.98,
-        "azi": 68
+        md: 660,
+        inc: 1.98,
+        azi: 68,
       },
       {
-        "md": 690,
-        "inc": 2.31,
-        "azi": 68
+        md: 690,
+        inc: 2.31,
+        azi: 68,
       },
       {
-        "md": 720,
-        "inc": 2.64,
-        "azi": 68
+        md: 720,
+        inc: 2.64,
+        azi: 68,
       },
       {
-        "md": 750,
-        "inc": 2.97,
-        "azi": 68
+        md: 750,
+        inc: 2.97,
+        azi: 68,
       },
       {
-        "md": 780,
-        "inc": 3.3,
-        "azi": 68
+        md: 780,
+        inc: 3.3,
+        azi: 68,
       },
       {
-        "md": 810,
-        "inc": 3.63,
-        "azi": 68
+        md: 810,
+        inc: 3.63,
+        azi: 68,
       },
       {
-        "md": 840,
-        "inc": 3.96,
-        "azi": 68
+        md: 840,
+        inc: 3.96,
+        azi: 68,
       },
       {
-        "md": 870,
-        "inc": 4.29,
-        "azi": 68
+        md: 870,
+        inc: 4.29,
+        azi: 68,
       },
       {
-        "md": 900,
-        "inc": 4.62,
-        "azi": 68
+        md: 900,
+        inc: 4.62,
+        azi: 68,
       },
       {
-        "md": 930,
-        "inc": 4.95,
-        "azi": 68
+        md: 930,
+        inc: 4.95,
+        azi: 68,
       },
       {
-        "md": 960,
-        "inc": 5.28,
-        "azi": 68
+        md: 960,
+        inc: 5.28,
+        azi: 68,
       },
       {
-        "md": 990,
-        "inc": 5.61,
-        "azi": 68
+        md: 990,
+        inc: 5.61,
+        azi: 68,
       },
       {
-        "md": 1020,
-        "inc": 5.94,
-        "azi": 68
+        md: 1020,
+        inc: 5.94,
+        azi: 68,
       },
       {
-        "md": 1050,
-        "inc": 6.27,
-        "azi": 68
+        md: 1050,
+        inc: 6.27,
+        azi: 68,
       },
       {
-        "md": 1080,
-        "inc": 6.6,
-        "azi": 68
+        md: 1080,
+        inc: 6.6,
+        azi: 68,
       },
       {
-        "md": 1110,
-        "inc": 6.93,
-        "azi": 68
+        md: 1110,
+        inc: 6.93,
+        azi: 68,
       },
       {
-        "md": 1140,
-        "inc": 7.26,
-        "azi": 68
+        md: 1140,
+        inc: 7.26,
+        azi: 68,
       },
       {
-        "md": 1170,
-        "inc": 7.59,
-        "azi": 68
+        md: 1170,
+        inc: 7.59,
+        azi: 68,
       },
       {
-        "md": 1200,
-        "inc": 7.92,
-        "azi": 68
+        md: 1200,
+        inc: 7.92,
+        azi: 68,
       },
       {
-        "md": 1230,
-        "inc": 8.25,
-        "azi": 68
+        md: 1230,
+        inc: 8.25,
+        azi: 68,
       },
       {
-        "md": 1260,
-        "inc": 8.58,
-        "azi": 68
+        md: 1260,
+        inc: 8.58,
+        azi: 68,
       },
       {
-        "md": 1290,
-        "inc": 8.91,
-        "azi": 68
+        md: 1290,
+        inc: 8.91,
+        azi: 68,
       },
       {
-        "md": 1320,
-        "inc": 9.24,
-        "azi": 68
+        md: 1320,
+        inc: 9.24,
+        azi: 68,
       },
       {
-        "md": 1350,
-        "inc": 9.57,
-        "azi": 68
+        md: 1350,
+        inc: 9.57,
+        azi: 68,
       },
       {
-        "md": 1380,
-        "inc": 9.9,
-        "azi": 68
+        md: 1380,
+        inc: 9.9,
+        azi: 68,
       },
       {
-        "md": 1410,
-        "inc": 10.23,
-        "azi": 68
+        md: 1410,
+        inc: 10.23,
+        azi: 68,
       },
       {
-        "md": 1440,
-        "inc": 10.56,
-        "azi": 68
+        md: 1440,
+        inc: 10.56,
+        azi: 68,
       },
       {
-        "md": 1470,
-        "inc": 10.89,
-        "azi": 68
+        md: 1470,
+        inc: 10.89,
+        azi: 68,
       },
       {
-        "md": 1500,
-        "inc": 11.22,
-        "azi": 68
+        md: 1500,
+        inc: 11.22,
+        azi: 68,
       },
       {
-        "md": 1530,
-        "inc": 11.55,
-        "azi": 68
+        md: 1530,
+        inc: 11.55,
+        azi: 68,
       },
       {
-        "md": 1560,
-        "inc": 11.88,
-        "azi": 68
+        md: 1560,
+        inc: 11.88,
+        azi: 68,
       },
       {
-        "md": 1590,
-        "inc": 12.21,
-        "azi": 68
+        md: 1590,
+        inc: 12.21,
+        azi: 68,
       },
       {
-        "md": 1620,
-        "inc": 12.54,
-        "azi": 68
+        md: 1620,
+        inc: 12.54,
+        azi: 68,
       },
       {
-        "md": 1650,
-        "inc": 12.87,
-        "azi": 68
+        md: 1650,
+        inc: 12.87,
+        azi: 68,
       },
       {
-        "md": 1680,
-        "inc": 13.2,
-        "azi": 68
+        md: 1680,
+        inc: 13.2,
+        azi: 68,
       },
       {
-        "md": 1710,
-        "inc": 13.53,
-        "azi": 68
+        md: 1710,
+        inc: 13.53,
+        azi: 68,
       },
       {
-        "md": 1740,
-        "inc": 13.86,
-        "azi": 68
+        md: 1740,
+        inc: 13.86,
+        azi: 68,
       },
       {
-        "md": 1770,
-        "inc": 14.19,
-        "azi": 68
+        md: 1770,
+        inc: 14.19,
+        azi: 68,
       },
       {
-        "md": 1800,
-        "inc": 14.52,
-        "azi": 68
+        md: 1800,
+        inc: 14.52,
+        azi: 68,
       },
       {
-        "md": 1830,
-        "inc": 14.85,
-        "azi": 68
+        md: 1830,
+        inc: 14.85,
+        azi: 68,
       },
       {
-        "md": 1860,
-        "inc": 15.18,
-        "azi": 68
+        md: 1860,
+        inc: 15.18,
+        azi: 68,
       },
       {
-        "md": 1890,
-        "inc": 15.51,
-        "azi": 68
+        md: 1890,
+        inc: 15.51,
+        azi: 68,
       },
       {
-        "md": 1920,
-        "inc": 15.84,
-        "azi": 68
+        md: 1920,
+        inc: 15.84,
+        azi: 68,
       },
       {
-        "md": 1950,
-        "inc": 16.17,
-        "azi": 68
+        md: 1950,
+        inc: 16.17,
+        azi: 68,
       },
       {
-        "md": 1980,
-        "inc": 16.5,
-        "azi": 68
+        md: 1980,
+        inc: 16.5,
+        azi: 68,
       },
       {
-        "md": 2010,
-        "inc": 16.83,
-        "azi": 68
+        md: 2010,
+        inc: 16.83,
+        azi: 68,
       },
       {
-        "md": 2040,
-        "inc": 17.16,
-        "azi": 68
+        md: 2040,
+        inc: 17.16,
+        azi: 68,
       },
       {
-        "md": 2070,
-        "inc": 17.49,
-        "azi": 68
+        md: 2070,
+        inc: 17.49,
+        azi: 68,
       },
       {
-        "md": 2100,
-        "inc": 17.82,
-        "azi": 68
+        md: 2100,
+        inc: 17.82,
+        azi: 68,
       },
       {
-        "md": 2130,
-        "inc": 18.15,
-        "azi": 68
+        md: 2130,
+        inc: 18.15,
+        azi: 68,
       },
       {
-        "md": 2160,
-        "inc": 18.48,
-        "azi": 68
+        md: 2160,
+        inc: 18.48,
+        azi: 68,
       },
       {
-        "md": 2190,
-        "inc": 18.81,
-        "azi": 68
+        md: 2190,
+        inc: 18.81,
+        azi: 68,
       },
       {
-        "md": 2220,
-        "inc": 19.14,
-        "azi": 68
+        md: 2220,
+        inc: 19.14,
+        azi: 68,
       },
       {
-        "md": 2250,
-        "inc": 19.47,
-        "azi": 68
+        md: 2250,
+        inc: 19.47,
+        azi: 68,
       },
       {
-        "md": 2280,
-        "inc": 19.8,
-        "azi": 68
+        md: 2280,
+        inc: 19.8,
+        azi: 68,
       },
       {
-        "md": 2310,
-        "inc": 20.13,
-        "azi": 68
+        md: 2310,
+        inc: 20.13,
+        azi: 68,
       },
       {
-        "md": 2340,
-        "inc": 20.46,
-        "azi": 68
+        md: 2340,
+        inc: 20.46,
+        azi: 68,
       },
       {
-        "md": 2370,
-        "inc": 20.79,
-        "azi": 68
+        md: 2370,
+        inc: 20.79,
+        azi: 68,
       },
       {
-        "md": 2400,
-        "inc": 21.12,
-        "azi": 68
+        md: 2400,
+        inc: 21.12,
+        azi: 68,
       },
       {
-        "md": 2430,
-        "inc": 21.45,
-        "azi": 68
+        md: 2430,
+        inc: 21.45,
+        azi: 68,
       },
       {
-        "md": 2460,
-        "inc": 21.78,
-        "azi": 68
+        md: 2460,
+        inc: 21.78,
+        azi: 68,
       },
       {
-        "md": 2490,
-        "inc": 22.11,
-        "azi": 68
+        md: 2490,
+        inc: 22.11,
+        azi: 68,
       },
       {
-        "md": 2520,
-        "inc": 22.44,
-        "azi": 68
+        md: 2520,
+        inc: 22.44,
+        azi: 68,
       },
       {
-        "md": 2550,
-        "inc": 22.77,
-        "azi": 68
+        md: 2550,
+        inc: 22.77,
+        azi: 68,
       },
       {
-        "md": 2580,
-        "inc": 23.1,
-        "azi": 68
+        md: 2580,
+        inc: 23.1,
+        azi: 68,
       },
       {
-        "md": 2610,
-        "inc": 23.43,
-        "azi": 68
+        md: 2610,
+        inc: 23.43,
+        azi: 68,
       },
       {
-        "md": 2640,
-        "inc": 23.76,
-        "azi": 68
+        md: 2640,
+        inc: 23.76,
+        azi: 68,
       },
       {
-        "md": 2670,
-        "inc": 24.09,
-        "azi": 68
+        md: 2670,
+        inc: 24.09,
+        azi: 68,
       },
       {
-        "md": 2700,
-        "inc": 24.42,
-        "azi": 68
+        md: 2700,
+        inc: 24.42,
+        azi: 68,
       },
       {
-        "md": 2730,
-        "inc": 24.75,
-        "azi": 68
+        md: 2730,
+        inc: 24.75,
+        azi: 68,
       },
       {
-        "md": 2760,
-        "inc": 25.08,
-        "azi": 68
+        md: 2760,
+        inc: 25.08,
+        azi: 68,
       },
       {
-        "md": 2790,
-        "inc": 25.41,
-        "azi": 68
+        md: 2790,
+        inc: 25.41,
+        azi: 68,
       },
       {
-        "md": 2820,
-        "inc": 25.74,
-        "azi": 68
+        md: 2820,
+        inc: 25.74,
+        azi: 68,
       },
       {
-        "md": 2850,
-        "inc": 26.07,
-        "azi": 68
+        md: 2850,
+        inc: 26.07,
+        azi: 68,
       },
       {
-        "md": 2880,
-        "inc": 26.4,
-        "azi": 68
+        md: 2880,
+        inc: 26.4,
+        azi: 68,
       },
       {
-        "md": 2910,
-        "inc": 26.73,
-        "azi": 68
+        md: 2910,
+        inc: 26.73,
+        azi: 68,
       },
       {
-        "md": 2940,
-        "inc": 27.06,
-        "azi": 68
+        md: 2940,
+        inc: 27.06,
+        azi: 68,
       },
       {
-        "md": 2970,
-        "inc": 27.39,
-        "azi": 68
+        md: 2970,
+        inc: 27.39,
+        azi: 68,
       },
       {
-        "md": 3000,
-        "inc": 27.72,
-        "azi": 68
+        md: 3000,
+        inc: 27.72,
+        azi: 68,
       },
       {
-        "md": 3030,
-        "inc": 28.05,
-        "azi": 68
+        md: 3030,
+        inc: 28.05,
+        azi: 68,
       },
       {
-        "md": 3060,
-        "inc": 28.38,
-        "azi": 68
+        md: 3060,
+        inc: 28.38,
+        azi: 68,
       },
       {
-        "md": 3090,
-        "inc": 28.71,
-        "azi": 68
+        md: 3090,
+        inc: 28.71,
+        azi: 68,
       },
       {
-        "md": 3120,
-        "inc": 29.04,
-        "azi": 68
+        md: 3120,
+        inc: 29.04,
+        azi: 68,
       },
       {
-        "md": 3150,
-        "inc": 29.37,
-        "azi": 68
+        md: 3150,
+        inc: 29.37,
+        azi: 68,
       },
       {
-        "md": 3180,
-        "inc": 29.7,
-        "azi": 68
+        md: 3180,
+        inc: 29.7,
+        azi: 68,
       },
       {
-        "md": 3210,
-        "inc": 30.03,
-        "azi": 68
+        md: 3210,
+        inc: 30.03,
+        azi: 68,
       },
       {
-        "md": 3240,
-        "inc": 30.36,
-        "azi": 68
+        md: 3240,
+        inc: 30.36,
+        azi: 68,
       },
       {
-        "md": 3270,
-        "inc": 30.69,
-        "azi": 68
+        md: 3270,
+        inc: 30.69,
+        azi: 68,
       },
       {
-        "md": 3300,
-        "inc": 31.02,
-        "azi": 68
+        md: 3300,
+        inc: 31.02,
+        azi: 68,
       },
       {
-        "md": 3330,
-        "inc": 31.35,
-        "azi": 68
+        md: 3330,
+        inc: 31.35,
+        azi: 68,
       },
       {
-        "md": 3360,
-        "inc": 31.68,
-        "azi": 68
+        md: 3360,
+        inc: 31.68,
+        azi: 68,
       },
       {
-        "md": 3390,
-        "inc": 32.01,
-        "azi": 68
+        md: 3390,
+        inc: 32.01,
+        azi: 68,
       },
       {
-        "md": 3420,
-        "inc": 32.34,
-        "azi": 68
+        md: 3420,
+        inc: 32.34,
+        azi: 68,
       },
       {
-        "md": 3450,
-        "inc": 32.67,
-        "azi": 68
+        md: 3450,
+        inc: 32.67,
+        azi: 68,
       },
       {
-        "md": 3480,
-        "inc": 33,
-        "azi": 68
+        md: 3480,
+        inc: 33,
+        azi: 68,
       },
       {
-        "md": 3510,
-        "inc": 33.33,
-        "azi": 68
+        md: 3510,
+        inc: 33.33,
+        azi: 68,
       },
       {
-        "md": 3540,
-        "inc": 33.66,
-        "azi": 68
+        md: 3540,
+        inc: 33.66,
+        azi: 68,
       },
       {
-        "md": 3570,
-        "inc": 33.99,
-        "azi": 68
+        md: 3570,
+        inc: 33.99,
+        azi: 68,
       },
       {
-        "md": 3600,
-        "inc": 34.32,
-        "azi": 68
+        md: 3600,
+        inc: 34.32,
+        azi: 68,
       },
       {
-        "md": 3630,
-        "inc": 34.65,
-        "azi": 68
+        md: 3630,
+        inc: 34.65,
+        azi: 68,
       },
       {
-        "md": 3660,
-        "inc": 34.98,
-        "azi": 68
+        md: 3660,
+        inc: 34.98,
+        azi: 68,
       },
       {
-        "md": 3690,
-        "inc": 35.31,
-        "azi": 68
+        md: 3690,
+        inc: 35.31,
+        azi: 68,
       },
       {
-        "md": 3720,
-        "inc": 35.64,
-        "azi": 68
+        md: 3720,
+        inc: 35.64,
+        azi: 68,
       },
       {
-        "md": 3750,
-        "inc": 35.97,
-        "azi": 68
+        md: 3750,
+        inc: 35.97,
+        azi: 68,
       },
       {
-        "md": 3780,
-        "inc": 36.3,
-        "azi": 68
+        md: 3780,
+        inc: 36.3,
+        azi: 68,
       },
       {
-        "md": 3810,
-        "inc": 36.63,
-        "azi": 68
+        md: 3810,
+        inc: 36.63,
+        azi: 68,
       },
       {
-        "md": 3840,
-        "inc": 36.96,
-        "azi": 68
+        md: 3840,
+        inc: 36.96,
+        azi: 68,
       },
       {
-        "md": 3870,
-        "inc": 37.29,
-        "azi": 68
+        md: 3870,
+        inc: 37.29,
+        azi: 68,
       },
       {
-        "md": 3900,
-        "inc": 37.62,
-        "azi": 68
+        md: 3900,
+        inc: 37.62,
+        azi: 68,
       },
       {
-        "md": 3930,
-        "inc": 37.95,
-        "azi": 68
+        md: 3930,
+        inc: 37.95,
+        azi: 68,
       },
       {
-        "md": 3960,
-        "inc": 38.28,
-        "azi": 68
+        md: 3960,
+        inc: 38.28,
+        azi: 68,
       },
       {
-        "md": 3990,
-        "inc": 38.61,
-        "azi": 68
+        md: 3990,
+        inc: 38.61,
+        azi: 68,
       },
       {
-        "md": 4020,
-        "inc": 38.94,
-        "azi": 68
+        md: 4020,
+        inc: 38.94,
+        azi: 68,
       },
       {
-        "md": 4050,
-        "inc": 39.27,
-        "azi": 68
+        md: 4050,
+        inc: 39.27,
+        azi: 68,
       },
       {
-        "md": 4080,
-        "inc": 39.6,
-        "azi": 68
+        md: 4080,
+        inc: 39.6,
+        azi: 68,
       },
       {
-        "md": 4110,
-        "inc": 39.93,
-        "azi": 68
+        md: 4110,
+        inc: 39.93,
+        azi: 68,
       },
       {
-        "md": 4140,
-        "inc": 40.26,
-        "azi": 68
+        md: 4140,
+        inc: 40.26,
+        azi: 68,
       },
       {
-        "md": 4170,
-        "inc": 40.59,
-        "azi": 68
+        md: 4170,
+        inc: 40.59,
+        azi: 68,
       },
       {
-        "md": 4200,
-        "inc": 40.92,
-        "azi": 68
+        md: 4200,
+        inc: 40.92,
+        azi: 68,
       },
       {
-        "md": 4230,
-        "inc": 41.25,
-        "azi": 68
+        md: 4230,
+        inc: 41.25,
+        azi: 68,
       },
       {
-        "md": 4260,
-        "inc": 41.58,
-        "azi": 68
+        md: 4260,
+        inc: 41.58,
+        azi: 68,
       },
       {
-        "md": 4290,
-        "inc": 41.91,
-        "azi": 68
+        md: 4290,
+        inc: 41.91,
+        azi: 68,
       },
       {
-        "md": 4320,
-        "inc": 42.24,
-        "azi": 68
+        md: 4320,
+        inc: 42.24,
+        azi: 68,
       },
       {
-        "md": 4350,
-        "inc": 42.57,
-        "azi": 68
+        md: 4350,
+        inc: 42.57,
+        azi: 68,
       },
       {
-        "md": 4380,
-        "inc": 42.9,
-        "azi": 68
+        md: 4380,
+        inc: 42.9,
+        azi: 68,
       },
       {
-        "md": 4410,
-        "inc": 43.23,
-        "azi": 68
+        md: 4410,
+        inc: 43.23,
+        azi: 68,
       },
       {
-        "md": 4440,
-        "inc": 43.56,
-        "azi": 68
+        md: 4440,
+        inc: 43.56,
+        azi: 68,
       },
       {
-        "md": 4470,
-        "inc": 43.89,
-        "azi": 68
+        md: 4470,
+        inc: 43.89,
+        azi: 68,
       },
       {
-        "md": 4500,
-        "inc": 44.22,
-        "azi": 68
+        md: 4500,
+        inc: 44.22,
+        azi: 68,
       },
       {
-        "md": 4530,
-        "inc": 44.55,
-        "azi": 68
+        md: 4530,
+        inc: 44.55,
+        azi: 68,
       },
       {
-        "md": 4560,
-        "inc": 44.88,
-        "azi": 68
+        md: 4560,
+        inc: 44.88,
+        azi: 68,
       },
       {
-        "md": 4590,
-        "inc": 45.21,
-        "azi": 68
+        md: 4590,
+        inc: 45.21,
+        azi: 68,
       },
       {
-        "md": 4620,
-        "inc": 45.54,
-        "azi": 68
+        md: 4620,
+        inc: 45.54,
+        azi: 68,
       },
       {
-        "md": 4650,
-        "inc": 45.87,
-        "azi": 68
+        md: 4650,
+        inc: 45.87,
+        azi: 68,
       },
       {
-        "md": 4680,
-        "inc": 46.2,
-        "azi": 68
+        md: 4680,
+        inc: 46.2,
+        azi: 68,
       },
       {
-        "md": 4710,
-        "inc": 46.53,
-        "azi": 68
+        md: 4710,
+        inc: 46.53,
+        azi: 68,
       },
       {
-        "md": 4740,
-        "inc": 46.86,
-        "azi": 68
+        md: 4740,
+        inc: 46.86,
+        azi: 68,
       },
       {
-        "md": 4770,
-        "inc": 47.19,
-        "azi": 68
+        md: 4770,
+        inc: 47.19,
+        azi: 68,
       },
       {
-        "md": 4800,
-        "inc": 47.52,
-        "azi": 68
+        md: 4800,
+        inc: 47.52,
+        azi: 68,
       },
       {
-        "md": 4830,
-        "inc": 47.85,
-        "azi": 68
+        md: 4830,
+        inc: 47.85,
+        azi: 68,
       },
       {
-        "md": 4860,
-        "inc": 48.18,
-        "azi": 68
+        md: 4860,
+        inc: 48.18,
+        azi: 68,
       },
       {
-        "md": 4890,
-        "inc": 48.51,
-        "azi": 68
+        md: 4890,
+        inc: 48.51,
+        azi: 68,
       },
       {
-        "md": 4920,
-        "inc": 48.84,
-        "azi": 68
+        md: 4920,
+        inc: 48.84,
+        azi: 68,
       },
       {
-        "md": 4950,
-        "inc": 49.17,
-        "azi": 68
+        md: 4950,
+        inc: 49.17,
+        azi: 68,
       },
       {
-        "md": 4980,
-        "inc": 49.5,
-        "azi": 68
+        md: 4980,
+        inc: 49.5,
+        azi: 68,
       },
       {
-        "md": 5010,
-        "inc": 49.83,
-        "azi": 68
+        md: 5010,
+        inc: 49.83,
+        azi: 68,
       },
       {
-        "md": 5040,
-        "inc": 50.16,
-        "azi": 68
+        md: 5040,
+        inc: 50.16,
+        azi: 68,
       },
       {
-        "md": 5070,
-        "inc": 50.49,
-        "azi": 68
+        md: 5070,
+        inc: 50.49,
+        azi: 68,
       },
       {
-        "md": 5100,
-        "inc": 50.82,
-        "azi": 68
+        md: 5100,
+        inc: 50.82,
+        azi: 68,
       },
       {
-        "md": 5130,
-        "inc": 51.15,
-        "azi": 68
+        md: 5130,
+        inc: 51.15,
+        azi: 68,
       },
       {
-        "md": 5160,
-        "inc": 51.48,
-        "azi": 68
+        md: 5160,
+        inc: 51.48,
+        azi: 68,
       },
       {
-        "md": 5190,
-        "inc": 51.81,
-        "azi": 68
+        md: 5190,
+        inc: 51.81,
+        azi: 68,
       },
       {
-        "md": 5220,
-        "inc": 52.14,
-        "azi": 68
+        md: 5220,
+        inc: 52.14,
+        azi: 68,
       },
       {
-        "md": 5250,
-        "inc": 52.47,
-        "azi": 68
+        md: 5250,
+        inc: 52.47,
+        azi: 68,
       },
       {
-        "md": 5280,
-        "inc": 52.8,
-        "azi": 68
+        md: 5280,
+        inc: 52.8,
+        azi: 68,
       },
       {
-        "md": 5310,
-        "inc": 53.13,
-        "azi": 68
+        md: 5310,
+        inc: 53.13,
+        azi: 68,
       },
       {
-        "md": 5340,
-        "inc": 53.46,
-        "azi": 68
+        md: 5340,
+        inc: 53.46,
+        azi: 68,
       },
       {
-        "md": 5370,
-        "inc": 53.79,
-        "azi": 68
+        md: 5370,
+        inc: 53.79,
+        azi: 68,
       },
       {
-        "md": 5400,
-        "inc": 54.12,
-        "azi": 68
+        md: 5400,
+        inc: 54.12,
+        azi: 68,
       },
       {
-        "md": 5430,
-        "inc": 54.45,
-        "azi": 68
+        md: 5430,
+        inc: 54.45,
+        azi: 68,
       },
       {
-        "md": 5460,
-        "inc": 54.78,
-        "azi": 68
+        md: 5460,
+        inc: 54.78,
+        azi: 68,
       },
       {
-        "md": 5490,
-        "inc": 55.11,
-        "azi": 68
+        md: 5490,
+        inc: 55.11,
+        azi: 68,
       },
       {
-        "md": 5520,
-        "inc": 55.44,
-        "azi": 68
+        md: 5520,
+        inc: 55.44,
+        azi: 68,
       },
       {
-        "md": 5550,
-        "inc": 55.77,
-        "azi": 68
+        md: 5550,
+        inc: 55.77,
+        azi: 68,
       },
       {
-        "md": 5580,
-        "inc": 56.1,
-        "azi": 68
+        md: 5580,
+        inc: 56.1,
+        azi: 68,
       },
       {
-        "md": 5610,
-        "inc": 56.43,
-        "azi": 68
+        md: 5610,
+        inc: 56.43,
+        azi: 68,
       },
       {
-        "md": 5640,
-        "inc": 56.76,
-        "azi": 68
+        md: 5640,
+        inc: 56.76,
+        azi: 68,
       },
       {
-        "md": 5670,
-        "inc": 57.09,
-        "azi": 68
+        md: 5670,
+        inc: 57.09,
+        azi: 68,
       },
       {
-        "md": 5700,
-        "inc": 57.42,
-        "azi": 68
+        md: 5700,
+        inc: 57.42,
+        azi: 68,
       },
       {
-        "md": 5730,
-        "inc": 57.75,
-        "azi": 68
+        md: 5730,
+        inc: 57.75,
+        azi: 68,
       },
       {
-        "md": 5760,
-        "inc": 58.08,
-        "azi": 68
+        md: 5760,
+        inc: 58.08,
+        azi: 68,
       },
       {
-        "md": 5790,
-        "inc": 58.41,
-        "azi": 68
+        md: 5790,
+        inc: 58.41,
+        azi: 68,
       },
       {
-        "md": 5820,
-        "inc": 58.74,
-        "azi": 68
+        md: 5820,
+        inc: 58.74,
+        azi: 68,
       },
       {
-        "md": 5850,
-        "inc": 59.07,
-        "azi": 68
+        md: 5850,
+        inc: 59.07,
+        azi: 68,
       },
       {
-        "md": 5880,
-        "inc": 59.4,
-        "azi": 68
+        md: 5880,
+        inc: 59.4,
+        azi: 68,
       },
       {
-        "md": 5910,
-        "inc": 59.73,
-        "azi": 68
+        md: 5910,
+        inc: 59.73,
+        azi: 68,
       },
       {
-        "md": 5940,
-        "inc": 60.06,
-        "azi": 68
+        md: 5940,
+        inc: 60.06,
+        azi: 68,
       },
       {
-        "md": 5970,
-        "inc": 60.39,
-        "azi": 68
+        md: 5970,
+        inc: 60.39,
+        azi: 68,
       },
       {
-        "md": 6000,
-        "inc": 60.72,
-        "azi": 68
+        md: 6000,
+        inc: 60.72,
+        azi: 68,
       },
       {
-        "md": 6030,
-        "inc": 61.05,
-        "azi": 68
+        md: 6030,
+        inc: 61.05,
+        azi: 68,
       },
       {
-        "md": 6060,
-        "inc": 61.38,
-        "azi": 68
+        md: 6060,
+        inc: 61.38,
+        azi: 68,
       },
       {
-        "md": 6090,
-        "inc": 61.71,
-        "azi": 68
+        md: 6090,
+        inc: 61.71,
+        azi: 68,
       },
       {
-        "md": 6120,
-        "inc": 62.04,
-        "azi": 68
+        md: 6120,
+        inc: 62.04,
+        azi: 68,
       },
       {
-        "md": 6150,
-        "inc": 62.37,
-        "azi": 68
+        md: 6150,
+        inc: 62.37,
+        azi: 68,
       },
       {
-        "md": 6180,
-        "inc": 62.7,
-        "azi": 68
+        md: 6180,
+        inc: 62.7,
+        azi: 68,
       },
       {
-        "md": 6210,
-        "inc": 63.03,
-        "azi": 68
+        md: 6210,
+        inc: 63.03,
+        azi: 68,
       },
       {
-        "md": 6240,
-        "inc": 63.36,
-        "azi": 68
+        md: 6240,
+        inc: 63.36,
+        azi: 68,
       },
       {
-        "md": 6270,
-        "inc": 63.69,
-        "azi": 68
+        md: 6270,
+        inc: 63.69,
+        azi: 68,
       },
       {
-        "md": 6300,
-        "inc": 64.02,
-        "azi": 68
+        md: 6300,
+        inc: 64.02,
+        azi: 68,
       },
       {
-        "md": 6330,
-        "inc": 64.35,
-        "azi": 68
+        md: 6330,
+        inc: 64.35,
+        azi: 68,
       },
       {
-        "md": 6360,
-        "inc": 64.68,
-        "azi": 68
+        md: 6360,
+        inc: 64.68,
+        azi: 68,
       },
       {
-        "md": 6390,
-        "inc": 65.01,
-        "azi": 68
+        md: 6390,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 6420,
-        "inc": 65.01,
-        "azi": 68
+        md: 6420,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 6450,
-        "inc": 65.01,
-        "azi": 68
+        md: 6450,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 6480,
-        "inc": 65.01,
-        "azi": 68
+        md: 6480,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 6510,
-        "inc": 65.01,
-        "azi": 68
+        md: 6510,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 6540,
-        "inc": 65.01,
-        "azi": 68
+        md: 6540,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 6570,
-        "inc": 65.01,
-        "azi": 68
+        md: 6570,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 6600,
-        "inc": 65.01,
-        "azi": 68
+        md: 6600,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 6630,
-        "inc": 65.01,
-        "azi": 68
+        md: 6630,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 6660,
-        "inc": 65.01,
-        "azi": 68
+        md: 6660,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 6690,
-        "inc": 65.01,
-        "azi": 68
+        md: 6690,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 6720,
-        "inc": 65.01,
-        "azi": 68
+        md: 6720,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 6750,
-        "inc": 65.01,
-        "azi": 68
+        md: 6750,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 6780,
-        "inc": 65.01,
-        "azi": 68
+        md: 6780,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 6810,
-        "inc": 65.01,
-        "azi": 68
+        md: 6810,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 6840,
-        "inc": 65.01,
-        "azi": 68
+        md: 6840,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 6870,
-        "inc": 65.01,
-        "azi": 68
+        md: 6870,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 6900,
-        "inc": 65.01,
-        "azi": 68
+        md: 6900,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 6930,
-        "inc": 65.01,
-        "azi": 68
+        md: 6930,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 6960,
-        "inc": 65.01,
-        "azi": 68
+        md: 6960,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 6990,
-        "inc": 65.01,
-        "azi": 68
+        md: 6990,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 7020,
-        "inc": 65.01,
-        "azi": 68
+        md: 7020,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 7050,
-        "inc": 65.01,
-        "azi": 68
+        md: 7050,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 7080,
-        "inc": 65.01,
-        "azi": 68
+        md: 7080,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 7110,
-        "inc": 65.01,
-        "azi": 68
+        md: 7110,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 7140,
-        "inc": 65.01,
-        "azi": 68
+        md: 7140,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 7170,
-        "inc": 65.01,
-        "azi": 68
+        md: 7170,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 7200,
-        "inc": 65.01,
-        "azi": 68
+        md: 7200,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 7230,
-        "inc": 65.01,
-        "azi": 68
+        md: 7230,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 7260,
-        "inc": 65.01,
-        "azi": 68
+        md: 7260,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 7290,
-        "inc": 65.01,
-        "azi": 68
+        md: 7290,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 7320,
-        "inc": 65.01,
-        "azi": 68
+        md: 7320,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 7350,
-        "inc": 65.01,
-        "azi": 68
+        md: 7350,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 7380,
-        "inc": 65.01,
-        "azi": 68
+        md: 7380,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 7410,
-        "inc": 65.01,
-        "azi": 68
+        md: 7410,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 7440,
-        "inc": 65.01,
-        "azi": 68
+        md: 7440,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 7470,
-        "inc": 65.01,
-        "azi": 68
+        md: 7470,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 7500,
-        "inc": 65.01,
-        "azi": 68
+        md: 7500,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 7530,
-        "inc": 65.01,
-        "azi": 68
+        md: 7530,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 7560,
-        "inc": 65.01,
-        "azi": 68
+        md: 7560,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 7590,
-        "inc": 65.01,
-        "azi": 68
+        md: 7590,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 7620,
-        "inc": 65.01,
-        "azi": 68
+        md: 7620,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 7650,
-        "inc": 65.01,
-        "azi": 68
+        md: 7650,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 7680,
-        "inc": 65.01,
-        "azi": 68
+        md: 7680,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 7710,
-        "inc": 65.01,
-        "azi": 68
+        md: 7710,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 7740,
-        "inc": 65.01,
-        "azi": 68
+        md: 7740,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 7770,
-        "inc": 65.01,
-        "azi": 68
+        md: 7770,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 7800,
-        "inc": 65.01,
-        "azi": 68
+        md: 7800,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 7830,
-        "inc": 65.01,
-        "azi": 68
+        md: 7830,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 7860,
-        "inc": 65.01,
-        "azi": 68
+        md: 7860,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 7890,
-        "inc": 65.01,
-        "azi": 68
+        md: 7890,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 7920,
-        "inc": 65.01,
-        "azi": 68
+        md: 7920,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 7950,
-        "inc": 65.01,
-        "azi": 68
+        md: 7950,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 7980,
-        "inc": 65.01,
-        "azi": 68
+        md: 7980,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 8010,
-        "inc": 65.01,
-        "azi": 68
+        md: 8010,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 8040,
-        "inc": 65.01,
-        "azi": 68
+        md: 8040,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 8070,
-        "inc": 65.01,
-        "azi": 68
+        md: 8070,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 8100,
-        "inc": 65.01,
-        "azi": 68
+        md: 8100,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 8130,
-        "inc": 65.01,
-        "azi": 68
+        md: 8130,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 8160,
-        "inc": 65.01,
-        "azi": 68
+        md: 8160,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 8190,
-        "inc": 65.01,
-        "azi": 68
+        md: 8190,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 8220,
-        "inc": 65.01,
-        "azi": 68
+        md: 8220,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 8250,
-        "inc": 65.01,
-        "azi": 68
+        md: 8250,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 8280,
-        "inc": 65.01,
-        "azi": 68
+        md: 8280,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 8310,
-        "inc": 65.01,
-        "azi": 68
+        md: 8310,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 8340,
-        "inc": 65.01,
-        "azi": 68
+        md: 8340,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 8370,
-        "inc": 65.01,
-        "azi": 68
+        md: 8370,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 8400,
-        "inc": 65.01,
-        "azi": 68
+        md: 8400,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 8430,
-        "inc": 65.01,
-        "azi": 68
+        md: 8430,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 8460,
-        "inc": 65.01,
-        "azi": 68
+        md: 8460,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 8490,
-        "inc": 65.01,
-        "azi": 68
+        md: 8490,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 8520,
-        "inc": 65.01,
-        "azi": 68
+        md: 8520,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 8550,
-        "inc": 65.01,
-        "azi": 68
+        md: 8550,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 8580,
-        "inc": 65.01,
-        "azi": 68
+        md: 8580,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 8610,
-        "inc": 65.01,
-        "azi": 68
+        md: 8610,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 8640,
-        "inc": 65.01,
-        "azi": 68
+        md: 8640,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 8670,
-        "inc": 65.01,
-        "azi": 68
+        md: 8670,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 8700,
-        "inc": 65.01,
-        "azi": 68
+        md: 8700,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 8730,
-        "inc": 65.01,
-        "azi": 68
+        md: 8730,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 8760,
-        "inc": 65.01,
-        "azi": 68
+        md: 8760,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 8790,
-        "inc": 65.01,
-        "azi": 68
+        md: 8790,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 8820,
-        "inc": 65.01,
-        "azi": 68
+        md: 8820,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 8850,
-        "inc": 65.01,
-        "azi": 68
+        md: 8850,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 8880,
-        "inc": 65.01,
-        "azi": 68
+        md: 8880,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 8910,
-        "inc": 65.01,
-        "azi": 68
+        md: 8910,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 8940,
-        "inc": 65.01,
-        "azi": 68
+        md: 8940,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 8970,
-        "inc": 65.01,
-        "azi": 68
+        md: 8970,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 9000,
-        "inc": 65.01,
-        "azi": 68
+        md: 9000,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 9030,
-        "inc": 65.01,
-        "azi": 68
+        md: 9030,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 9060,
-        "inc": 65.01,
-        "azi": 68
+        md: 9060,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 9090,
-        "inc": 65.01,
-        "azi": 68
+        md: 9090,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 9120,
-        "inc": 65.01,
-        "azi": 68
+        md: 9120,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 9150,
-        "inc": 65.01,
-        "azi": 68
+        md: 9150,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 9180,
-        "inc": 65.01,
-        "azi": 68
+        md: 9180,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 9210,
-        "inc": 65.01,
-        "azi": 68
+        md: 9210,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 9240,
-        "inc": 65.01,
-        "azi": 68
+        md: 9240,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 9270,
-        "inc": 65.01,
-        "azi": 68
+        md: 9270,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 9300,
-        "inc": 65.01,
-        "azi": 68
+        md: 9300,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 9330,
-        "inc": 65.01,
-        "azi": 68
+        md: 9330,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 9360,
-        "inc": 65.01,
-        "azi": 68
+        md: 9360,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 9390,
-        "inc": 65.01,
-        "azi": 68
+        md: 9390,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 9420,
-        "inc": 65.01,
-        "azi": 68
+        md: 9420,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 9450,
-        "inc": 65.01,
-        "azi": 68
+        md: 9450,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 9480,
-        "inc": 65.01,
-        "azi": 68
+        md: 9480,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 9510,
-        "inc": 65.01,
-        "azi": 68
+        md: 9510,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 9540,
-        "inc": 65.01,
-        "azi": 68
+        md: 9540,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 9570,
-        "inc": 65.01,
-        "azi": 68
+        md: 9570,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 9600,
-        "inc": 65.01,
-        "azi": 68
+        md: 9600,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 9630,
-        "inc": 65.01,
-        "azi": 68
+        md: 9630,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 9660,
-        "inc": 65.01,
-        "azi": 68
+        md: 9660,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 9690,
-        "inc": 65.01,
-        "azi": 68
+        md: 9690,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 9720,
-        "inc": 65.01,
-        "azi": 68
+        md: 9720,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 9750,
-        "inc": 65.01,
-        "azi": 68
+        md: 9750,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 9780,
-        "inc": 65.01,
-        "azi": 68
+        md: 9780,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 9810,
-        "inc": 65.01,
-        "azi": 68
+        md: 9810,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 9840,
-        "inc": 65.01,
-        "azi": 68
+        md: 9840,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 9870,
-        "inc": 65.01,
-        "azi": 68
+        md: 9870,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 9900,
-        "inc": 65.01,
-        "azi": 68
+        md: 9900,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 9930,
-        "inc": 65.01,
-        "azi": 68
+        md: 9930,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 9960,
-        "inc": 65.01,
-        "azi": 68
+        md: 9960,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 9990,
-        "inc": 65.01,
-        "azi": 68
+        md: 9990,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 10020,
-        "inc": 65.01,
-        "azi": 68
+        md: 10020,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 10050,
-        "inc": 65.01,
-        "azi": 68
+        md: 10050,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 10080,
-        "inc": 65.01,
-        "azi": 68
+        md: 10080,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 10110,
-        "inc": 65.01,
-        "azi": 68
+        md: 10110,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 10140,
-        "inc": 65.01,
-        "azi": 68
+        md: 10140,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 10170,
-        "inc": 65.01,
-        "azi": 68
+        md: 10170,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 10200,
-        "inc": 65.01,
-        "azi": 68
+        md: 10200,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 10230,
-        "inc": 65.01,
-        "azi": 68
+        md: 10230,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 10260,
-        "inc": 65.01,
-        "azi": 68
+        md: 10260,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 10290,
-        "inc": 65.01,
-        "azi": 68
+        md: 10290,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 10320,
-        "inc": 65.01,
-        "azi": 68
+        md: 10320,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 10350,
-        "inc": 65.01,
-        "azi": 68
+        md: 10350,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 10380,
-        "inc": 65.01,
-        "azi": 68
+        md: 10380,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 10410,
-        "inc": 65.01,
-        "azi": 68
+        md: 10410,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 10440,
-        "inc": 65.01,
-        "azi": 68
+        md: 10440,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 10470,
-        "inc": 65.01,
-        "azi": 68
+        md: 10470,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 10500,
-        "inc": 65.01,
-        "azi": 68
+        md: 10500,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 10530,
-        "inc": 65.01,
-        "azi": 68
+        md: 10530,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 10560,
-        "inc": 65.01,
-        "azi": 68
+        md: 10560,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 10590,
-        "inc": 65.01,
-        "azi": 68
+        md: 10590,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 10620,
-        "inc": 65.01,
-        "azi": 68
+        md: 10620,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 10650,
-        "inc": 65.01,
-        "azi": 68
+        md: 10650,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 10680,
-        "inc": 65.01,
-        "azi": 68
+        md: 10680,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 10710,
-        "inc": 65.01,
-        "azi": 68
+        md: 10710,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 10740,
-        "inc": 65.01,
-        "azi": 68
+        md: 10740,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 10770,
-        "inc": 65.01,
-        "azi": 68
+        md: 10770,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 10800,
-        "inc": 65.01,
-        "azi": 68
+        md: 10800,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 10830,
-        "inc": 65.01,
-        "azi": 68
+        md: 10830,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 10860,
-        "inc": 65.01,
-        "azi": 68
+        md: 10860,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 10890,
-        "inc": 65.01,
-        "azi": 68
+        md: 10890,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 10920,
-        "inc": 65.01,
-        "azi": 68
+        md: 10920,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 10950,
-        "inc": 65.01,
-        "azi": 68
+        md: 10950,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 10980,
-        "inc": 65.01,
-        "azi": 68
+        md: 10980,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 11010,
-        "inc": 65.01,
-        "azi": 68
+        md: 11010,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 11040,
-        "inc": 65.01,
-        "azi": 68
+        md: 11040,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 11070,
-        "inc": 65.01,
-        "azi": 68
+        md: 11070,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 11100,
-        "inc": 65.01,
-        "azi": 68
+        md: 11100,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 11130,
-        "inc": 65.01,
-        "azi": 68
+        md: 11130,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 11160,
-        "inc": 65.01,
-        "azi": 68
+        md: 11160,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 11190,
-        "inc": 65.01,
-        "azi": 68
+        md: 11190,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 11220,
-        "inc": 65.01,
-        "azi": 68
+        md: 11220,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 11250,
-        "inc": 65.01,
-        "azi": 68
+        md: 11250,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 11280,
-        "inc": 65.01,
-        "azi": 68
+        md: 11280,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 11310,
-        "inc": 65.01,
-        "azi": 68
+        md: 11310,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 11340,
-        "inc": 65.01,
-        "azi": 68
+        md: 11340,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 11370,
-        "inc": 65.01,
-        "azi": 68
+        md: 11370,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 11400,
-        "inc": 65.01,
-        "azi": 68
+        md: 11400,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 11430,
-        "inc": 65.01,
-        "azi": 68
+        md: 11430,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 11460,
-        "inc": 65.01,
-        "azi": 68
+        md: 11460,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 11490,
-        "inc": 65.01,
-        "azi": 68
+        md: 11490,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 11520,
-        "inc": 65.01,
-        "azi": 68
+        md: 11520,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 11550,
-        "inc": 65.01,
-        "azi": 68
+        md: 11550,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 11580,
-        "inc": 65.01,
-        "azi": 68
+        md: 11580,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 11610,
-        "inc": 65.01,
-        "azi": 68
+        md: 11610,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 11640,
-        "inc": 65.01,
-        "azi": 68
+        md: 11640,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 11670,
-        "inc": 65.01,
-        "azi": 68
+        md: 11670,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 11700,
-        "inc": 65.01,
-        "azi": 68
+        md: 11700,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 11730,
-        "inc": 65.01,
-        "azi": 68
+        md: 11730,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 11760,
-        "inc": 65.01,
-        "azi": 68
+        md: 11760,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 11790,
-        "inc": 65.01,
-        "azi": 68
+        md: 11790,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 11820,
-        "inc": 65.01,
-        "azi": 68
+        md: 11820,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 11850,
-        "inc": 65.01,
-        "azi": 68
+        md: 11850,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 11880,
-        "inc": 65.01,
-        "azi": 68
+        md: 11880,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 11910,
-        "inc": 65.01,
-        "azi": 68
+        md: 11910,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 11940,
-        "inc": 65.01,
-        "azi": 68
+        md: 11940,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 11970,
-        "inc": 65.01,
-        "azi": 68
+        md: 11970,
+        inc: 65.01,
+        azi: 68,
       },
       {
-        "md": 12000,
-        "inc": 65.01,
-        "azi": 68
-      }
-    ]
+        md: 12000,
+        inc: 65.01,
+        azi: 68,
+      },
+    ],
   },
   {
-    "id": "pozo-3360-m",
-    "name": "Pozo Modelo 3360 m",
-    "description": "Modelo demo en metros con Vertical Section Direction de 130°.",
-    "unitSystem": "meters",
-    "verticalSectionDirection": 130,
-    "surveys": [
+    id: "pozo-3360-m",
+    name: "Pozo Modelo 3360 m",
+    description:
+      "Modelo demo en metros con Vertical Section Direction de 130°.",
+    unitSystem: "meters",
+    verticalSectionDirection: 130,
+    surveys: [
       {
-        "md": 0,
-        "inc": 0,
-        "azi": 0
+        md: 0,
+        inc: 0,
+        azi: 0,
       },
       {
-        "md": 30,
-        "inc": 0,
-        "azi": 0
+        md: 30,
+        inc: 0,
+        azi: 0,
       },
       {
-        "md": 60,
-        "inc": 0,
-        "azi": 0
+        md: 60,
+        inc: 0,
+        azi: 0,
       },
       {
-        "md": 90,
-        "inc": 0,
-        "azi": 0
+        md: 90,
+        inc: 0,
+        azi: 0,
       },
       {
-        "md": 120,
-        "inc": 0,
-        "azi": 0
+        md: 120,
+        inc: 0,
+        azi: 0,
       },
       {
-        "md": 150,
-        "inc": 0,
-        "azi": 0
+        md: 150,
+        inc: 0,
+        azi: 0,
       },
       {
-        "md": 180,
-        "inc": 0,
-        "azi": 0
+        md: 180,
+        inc: 0,
+        azi: 0,
       },
       {
-        "md": 210,
-        "inc": 0,
-        "azi": 0
+        md: 210,
+        inc: 0,
+        azi: 0,
       },
       {
-        "md": 240,
-        "inc": 0,
-        "azi": 0
+        md: 240,
+        inc: 0,
+        azi: 0,
       },
       {
-        "md": 270,
-        "inc": 0,
-        "azi": 0
+        md: 270,
+        inc: 0,
+        azi: 0,
       },
       {
-        "md": 300,
-        "inc": 0,
-        "azi": 0
+        md: 300,
+        inc: 0,
+        azi: 0,
       },
       {
-        "md": 330,
-        "inc": 0,
-        "azi": 0
+        md: 330,
+        inc: 0,
+        azi: 0,
       },
       {
-        "md": 360,
-        "inc": 0,
-        "azi": 0
+        md: 360,
+        inc: 0,
+        azi: 0,
       },
       {
-        "md": 390,
-        "inc": 0,
-        "azi": 0
+        md: 390,
+        inc: 0,
+        azi: 0,
       },
       {
-        "md": 420,
-        "inc": 0,
-        "azi": 0
+        md: 420,
+        inc: 0,
+        azi: 0,
       },
       {
-        "md": 450,
-        "inc": 0,
-        "azi": 0
+        md: 450,
+        inc: 0,
+        azi: 0,
       },
       {
-        "md": 480,
-        "inc": 0,
-        "azi": 0
+        md: 480,
+        inc: 0,
+        azi: 0,
       },
       {
-        "md": 510,
-        "inc": 0,
-        "azi": 0
+        md: 510,
+        inc: 0,
+        azi: 0,
       },
       {
-        "md": 540,
-        "inc": 0,
-        "azi": 0
+        md: 540,
+        inc: 0,
+        azi: 0,
       },
       {
-        "md": 570,
-        "inc": 0,
-        "azi": 0
+        md: 570,
+        inc: 0,
+        azi: 0,
       },
       {
-        "md": 600,
-        "inc": 0,
-        "azi": 0
+        md: 600,
+        inc: 0,
+        azi: 0,
       },
       {
-        "md": 630,
-        "inc": 0,
-        "azi": 0
+        md: 630,
+        inc: 0,
+        azi: 0,
       },
       {
-        "md": 660,
-        "inc": 0,
-        "azi": 0
+        md: 660,
+        inc: 0,
+        azi: 0,
       },
       {
-        "md": 690,
-        "inc": 0,
-        "azi": 0
+        md: 690,
+        inc: 0,
+        azi: 0,
       },
       {
-        "md": 720,
-        "inc": 0,
-        "azi": 0
+        md: 720,
+        inc: 0,
+        azi: 0,
       },
       {
-        "md": 750,
-        "inc": 0,
-        "azi": 0
+        md: 750,
+        inc: 0,
+        azi: 0,
       },
       {
-        "md": 780,
-        "inc": 0,
-        "azi": 0
+        md: 780,
+        inc: 0,
+        azi: 0,
       },
       {
-        "md": 810,
-        "inc": 1,
-        "azi": 130
+        md: 810,
+        inc: 1,
+        azi: 130,
       },
       {
-        "md": 840,
-        "inc": 2,
-        "azi": 130
+        md: 840,
+        inc: 2,
+        azi: 130,
       },
       {
-        "md": 870,
-        "inc": 3,
-        "azi": 130
+        md: 870,
+        inc: 3,
+        azi: 130,
       },
       {
-        "md": 900,
-        "inc": 4,
-        "azi": 130
+        md: 900,
+        inc: 4,
+        azi: 130,
       },
       {
-        "md": 930,
-        "inc": 5,
-        "azi": 130
+        md: 930,
+        inc: 5,
+        azi: 130,
       },
       {
-        "md": 960,
-        "inc": 6,
-        "azi": 130
+        md: 960,
+        inc: 6,
+        azi: 130,
       },
       {
-        "md": 990,
-        "inc": 7,
-        "azi": 130
+        md: 990,
+        inc: 7,
+        azi: 130,
       },
       {
-        "md": 1020,
-        "inc": 8,
-        "azi": 130
+        md: 1020,
+        inc: 8,
+        azi: 130,
       },
       {
-        "md": 1050,
-        "inc": 9,
-        "azi": 130
+        md: 1050,
+        inc: 9,
+        azi: 130,
       },
       {
-        "md": 1080,
-        "inc": 10,
-        "azi": 130
+        md: 1080,
+        inc: 10,
+        azi: 130,
       },
       {
-        "md": 1110,
-        "inc": 11,
-        "azi": 130
+        md: 1110,
+        inc: 11,
+        azi: 130,
       },
       {
-        "md": 1140,
-        "inc": 12,
-        "azi": 130
+        md: 1140,
+        inc: 12,
+        azi: 130,
       },
       {
-        "md": 1170,
-        "inc": 13,
-        "azi": 130
+        md: 1170,
+        inc: 13,
+        azi: 130,
       },
       {
-        "md": 1200,
-        "inc": 14,
-        "azi": 130
+        md: 1200,
+        inc: 14,
+        azi: 130,
       },
       {
-        "md": 1230,
-        "inc": 15,
-        "azi": 130
+        md: 1230,
+        inc: 15,
+        azi: 130,
       },
       {
-        "md": 1260,
-        "inc": 16,
-        "azi": 130
+        md: 1260,
+        inc: 16,
+        azi: 130,
       },
       {
-        "md": 1290,
-        "inc": 17,
-        "azi": 130
+        md: 1290,
+        inc: 17,
+        azi: 130,
       },
       {
-        "md": 1320,
-        "inc": 18,
-        "azi": 130
+        md: 1320,
+        inc: 18,
+        azi: 130,
       },
       {
-        "md": 1350,
-        "inc": 19,
-        "azi": 130
+        md: 1350,
+        inc: 19,
+        azi: 130,
       },
       {
-        "md": 1380,
-        "inc": 20,
-        "azi": 130
+        md: 1380,
+        inc: 20,
+        azi: 130,
       },
       {
-        "md": 1410,
-        "inc": 21,
-        "azi": 130
+        md: 1410,
+        inc: 21,
+        azi: 130,
       },
       {
-        "md": 1440,
-        "inc": 22,
-        "azi": 130
+        md: 1440,
+        inc: 22,
+        azi: 130,
       },
       {
-        "md": 1470,
-        "inc": 23,
-        "azi": 130
+        md: 1470,
+        inc: 23,
+        azi: 130,
       },
       {
-        "md": 1500,
-        "inc": 24,
-        "azi": 130
+        md: 1500,
+        inc: 24,
+        azi: 130,
       },
       {
-        "md": 1530,
-        "inc": 24,
-        "azi": 130
+        md: 1530,
+        inc: 24,
+        azi: 130,
       },
       {
-        "md": 1560,
-        "inc": 24,
-        "azi": 130
+        md: 1560,
+        inc: 24,
+        azi: 130,
       },
       {
-        "md": 1590,
-        "inc": 24,
-        "azi": 130
+        md: 1590,
+        inc: 24,
+        azi: 130,
       },
       {
-        "md": 1620,
-        "inc": 24,
-        "azi": 130
+        md: 1620,
+        inc: 24,
+        azi: 130,
       },
       {
-        "md": 1650,
-        "inc": 24,
-        "azi": 130
+        md: 1650,
+        inc: 24,
+        azi: 130,
       },
       {
-        "md": 1680,
-        "inc": 24,
-        "azi": 130
+        md: 1680,
+        inc: 24,
+        azi: 130,
       },
       {
-        "md": 1710,
-        "inc": 24,
-        "azi": 130
+        md: 1710,
+        inc: 24,
+        azi: 130,
       },
       {
-        "md": 1740,
-        "inc": 24,
-        "azi": 130
+        md: 1740,
+        inc: 24,
+        azi: 130,
       },
       {
-        "md": 1770,
-        "inc": 24,
-        "azi": 130
+        md: 1770,
+        inc: 24,
+        azi: 130,
       },
       {
-        "md": 1800,
-        "inc": 24,
-        "azi": 130
+        md: 1800,
+        inc: 24,
+        azi: 130,
       },
       {
-        "md": 1830,
-        "inc": 24,
-        "azi": 130
+        md: 1830,
+        inc: 24,
+        azi: 130,
       },
       {
-        "md": 1860,
-        "inc": 24,
-        "azi": 130
+        md: 1860,
+        inc: 24,
+        azi: 130,
       },
       {
-        "md": 1890,
-        "inc": 24,
-        "azi": 130
+        md: 1890,
+        inc: 24,
+        azi: 130,
       },
       {
-        "md": 1920,
-        "inc": 23,
-        "azi": 130
+        md: 1920,
+        inc: 23,
+        azi: 130,
       },
       {
-        "md": 1950,
-        "inc": 22,
-        "azi": 130
+        md: 1950,
+        inc: 22,
+        azi: 130,
       },
       {
-        "md": 1980,
-        "inc": 21,
-        "azi": 130
+        md: 1980,
+        inc: 21,
+        azi: 130,
       },
       {
-        "md": 2010,
-        "inc": 20,
-        "azi": 130
+        md: 2010,
+        inc: 20,
+        azi: 130,
       },
       {
-        "md": 2040,
-        "inc": 19,
-        "azi": 130
+        md: 2040,
+        inc: 19,
+        azi: 130,
       },
       {
-        "md": 2070,
-        "inc": 18,
-        "azi": 130
+        md: 2070,
+        inc: 18,
+        azi: 130,
       },
       {
-        "md": 2100,
-        "inc": 17,
-        "azi": 130
+        md: 2100,
+        inc: 17,
+        azi: 130,
       },
       {
-        "md": 2130,
-        "inc": 16,
-        "azi": 130
+        md: 2130,
+        inc: 16,
+        azi: 130,
       },
       {
-        "md": 2160,
-        "inc": 15,
-        "azi": 130
+        md: 2160,
+        inc: 15,
+        azi: 130,
       },
       {
-        "md": 2190,
-        "inc": 14,
-        "azi": 130
+        md: 2190,
+        inc: 14,
+        azi: 130,
       },
       {
-        "md": 2220,
-        "inc": 13,
-        "azi": 130
+        md: 2220,
+        inc: 13,
+        azi: 130,
       },
       {
-        "md": 2250,
-        "inc": 12,
-        "azi": 130
+        md: 2250,
+        inc: 12,
+        azi: 130,
       },
       {
-        "md": 2280,
-        "inc": 11,
-        "azi": 130
+        md: 2280,
+        inc: 11,
+        azi: 130,
       },
       {
-        "md": 2310,
-        "inc": 10,
-        "azi": 130
+        md: 2310,
+        inc: 10,
+        azi: 130,
       },
       {
-        "md": 2340,
-        "inc": 9,
-        "azi": 130
+        md: 2340,
+        inc: 9,
+        azi: 130,
       },
       {
-        "md": 2370,
-        "inc": 8,
-        "azi": 130
+        md: 2370,
+        inc: 8,
+        azi: 130,
       },
       {
-        "md": 2400,
-        "inc": 7,
-        "azi": 130
+        md: 2400,
+        inc: 7,
+        azi: 130,
       },
       {
-        "md": 2430,
-        "inc": 6,
-        "azi": 130
+        md: 2430,
+        inc: 6,
+        azi: 130,
       },
       {
-        "md": 2460,
-        "inc": 5,
-        "azi": 130
+        md: 2460,
+        inc: 5,
+        azi: 130,
       },
       {
-        "md": 2490,
-        "inc": 4,
-        "azi": 130
+        md: 2490,
+        inc: 4,
+        azi: 130,
       },
       {
-        "md": 2520,
-        "inc": 3,
-        "azi": 130
+        md: 2520,
+        inc: 3,
+        azi: 130,
       },
       {
-        "md": 2550,
-        "inc": 3,
-        "azi": 130
+        md: 2550,
+        inc: 3,
+        azi: 130,
       },
       {
-        "md": 2580,
-        "inc": 3,
-        "azi": 130
+        md: 2580,
+        inc: 3,
+        azi: 130,
       },
       {
-        "md": 2610,
-        "inc": 3,
-        "azi": 130
+        md: 2610,
+        inc: 3,
+        azi: 130,
       },
       {
-        "md": 2640,
-        "inc": 3,
-        "azi": 130
+        md: 2640,
+        inc: 3,
+        azi: 130,
       },
       {
-        "md": 2670,
-        "inc": 3,
-        "azi": 130
+        md: 2670,
+        inc: 3,
+        azi: 130,
       },
       {
-        "md": 2700,
-        "inc": 3,
-        "azi": 130
+        md: 2700,
+        inc: 3,
+        azi: 130,
       },
       {
-        "md": 2730,
-        "inc": 3,
-        "azi": 130
+        md: 2730,
+        inc: 3,
+        azi: 130,
       },
       {
-        "md": 2760,
-        "inc": 3,
-        "azi": 130
+        md: 2760,
+        inc: 3,
+        azi: 130,
       },
       {
-        "md": 2790,
-        "inc": 3,
-        "azi": 130
+        md: 2790,
+        inc: 3,
+        azi: 130,
       },
       {
-        "md": 2820,
-        "inc": 3,
-        "azi": 130
+        md: 2820,
+        inc: 3,
+        azi: 130,
       },
       {
-        "md": 2850,
-        "inc": 3,
-        "azi": 130
+        md: 2850,
+        inc: 3,
+        azi: 130,
       },
       {
-        "md": 2880,
-        "inc": 3,
-        "azi": 130
+        md: 2880,
+        inc: 3,
+        azi: 130,
       },
       {
-        "md": 2910,
-        "inc": 3,
-        "azi": 130
+        md: 2910,
+        inc: 3,
+        azi: 130,
       },
       {
-        "md": 2940,
-        "inc": 3,
-        "azi": 130
+        md: 2940,
+        inc: 3,
+        azi: 130,
       },
       {
-        "md": 2970,
-        "inc": 3,
-        "azi": 130
+        md: 2970,
+        inc: 3,
+        azi: 130,
       },
       {
-        "md": 3000,
-        "inc": 3,
-        "azi": 130
+        md: 3000,
+        inc: 3,
+        azi: 130,
       },
       {
-        "md": 3030,
-        "inc": 3,
-        "azi": 130
+        md: 3030,
+        inc: 3,
+        azi: 130,
       },
       {
-        "md": 3060,
-        "inc": 3,
-        "azi": 130
+        md: 3060,
+        inc: 3,
+        azi: 130,
       },
       {
-        "md": 3090,
-        "inc": 3,
-        "azi": 130
+        md: 3090,
+        inc: 3,
+        azi: 130,
       },
       {
-        "md": 3120,
-        "inc": 3,
-        "azi": 130
+        md: 3120,
+        inc: 3,
+        azi: 130,
       },
       {
-        "md": 3150,
-        "inc": 3,
-        "azi": 130
+        md: 3150,
+        inc: 3,
+        azi: 130,
       },
       {
-        "md": 3180,
-        "inc": 3,
-        "azi": 130
+        md: 3180,
+        inc: 3,
+        azi: 130,
       },
       {
-        "md": 3210,
-        "inc": 3,
-        "azi": 130
+        md: 3210,
+        inc: 3,
+        azi: 130,
       },
       {
-        "md": 3240,
-        "inc": 3,
-        "azi": 130
+        md: 3240,
+        inc: 3,
+        azi: 130,
       },
       {
-        "md": 3270,
-        "inc": 3,
-        "azi": 130
+        md: 3270,
+        inc: 3,
+        azi: 130,
       },
       {
-        "md": 3300,
-        "inc": 3,
-        "azi": 130
+        md: 3300,
+        inc: 3,
+        azi: 130,
       },
       {
-        "md": 3330,
-        "inc": 3,
-        "azi": 130
+        md: 3330,
+        inc: 3,
+        azi: 130,
       },
       {
-        "md": 3360,
-        "inc": 3,
-        "azi": 130
-      }
-    ]
-  }
+        md: 3360,
+        inc: 3,
+        azi: 130,
+      },
+    ],
+  },
 ];
+
+export const DEMO_WELLS = BASE_DEMO_WELLS.map((demoWell) => ({
+  ...demoWell,
+
+  /*
+   * Español:
+   * Conservamos `surveys` por compatibilidad, pero ahora también exponemos
+   * plannedSurveys y actualSurveys para el flujo Planned vs Actual.
+   *
+   * English:
+   * We keep `surveys` for compatibility, but now we also expose
+   * plannedSurveys and actualSurveys for the Planned vs Actual workflow.
+   */
+  plannedSurveys: demoWell.surveys,
+  actualSurveys: createDemoActualSurveys(demoWell.surveys, demoWell.unitSystem),
+}));
