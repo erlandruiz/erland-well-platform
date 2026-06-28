@@ -1,4 +1,85 @@
 # Changelog
+## [0.4.0] - Planned vs Actual Comparison
+
+**Español:**
+Se agregó el flujo Planned vs Actual para comparar una trayectoria propuesta contra una trayectoria real dentro del viewer.
+
+**English:**
+Added the Planned vs Actual workflow to compare a planned trajectory against an actual trajectory inside the viewer.
+
+### Agregado / Added
+
+* Nueva entrada de surveys separada para `Planned Surveys / Propuesto` y `Actual Surveys / Real`.
+
+* New separated survey input for `Planned Surveys / Proposed` and `Actual Surveys / Actual`.
+
+* Nueva vista de resultados con pestañas internas: `Propuesto`, `Real` y `Comparación`.
+
+* New results view with internal tabs: `Proposed`, `Actual`, and `Comparison`.
+
+* Nueva tabla de comparación Planned vs Actual.
+
+* New Planned vs Actual comparison table.
+
+* Nuevo selector de visualización de trayectoria: `Propuesto`, `Real` y `Ambos`.
+
+* New trajectory display selector: `Proposed`, `Actual`, and `Both`.
+
+* Soporte para mostrar trayectoria propuesta y real en `PlanView2D`.
+
+* Support for displaying planned and actual trajectories in `PlanView2D`.
+
+* Soporte para mostrar trayectoria propuesta y real en `VerticalView2D`.
+
+* Support for displaying planned and actual trajectories in `VerticalView2D`.
+
+### Comparación / Comparison
+
+**Español:**
+La comparación usa el MD del survey real como referencia. Para cada estación real, el viewer busca el punto equivalente en el plan. Si el MD existe exactamente en el plan, usa `Exact MD`. Si el MD no existe pero está dentro del rango del plan, interpola la trayectoria propuesta y muestra `Interpolated`.
+
+**English:**
+The comparison uses the actual survey MD as the reference. For each actual station, the viewer finds the equivalent point in the plan. If the MD exists exactly in the plan, it uses `Exact MD`. If the MD does not exist but is inside the planned trajectory range, it interpolates the planned trajectory and displays `Interpolated`.
+
+### Métricas agregadas / Added Metrics
+
+* Delta INC
+* Delta AZI
+* Delta TVD
+* Delta North
+* Delta East
+* Delta Vertical Section
+* Delta DLS
+* Closure Distance
+
+### Mejorado / Improved
+
+* `PlanView2D` ahora permite mostrar solo la trayectoria propuesta, solo la real o ambas.
+
+* `PlanView2D` can now display only the planned trajectory, only the actual trajectory, or both.
+
+* `VerticalView2D` ahora permite mostrar solo la trayectoria propuesta, solo la real o ambas.
+
+* `VerticalView2D` can now display only the planned trajectory, only the actual trajectory, or both.
+
+* El proyecto guardado en `localStorage` ahora conserva surveys propuestos, surveys reales y modo de visualización.
+
+* The project saved in `localStorage` now preserves planned surveys, actual surveys, and display mode.
+
+### Notas / Notes
+
+**Español:**
+`Closure Distance` representa la separación horizontal total entre la trayectoria real y la trayectoria propuesta en el mismo MD. Los valores Delta usan la lógica `Actual - Planned`.
+
+**English:**
+`Closure Distance` represents the total horizontal separation between the actual trajectory and the planned trajectory at the same MD. Delta values use the `Actual - Planned` logic.
+
+**Español:**
+La vista 3D todavía mantiene el flujo de trayectoria actual y podrá integrarse con Planned vs Actual en una futura versión.
+
+**English:**
+The 3D view still keeps the current trajectory workflow and can be integrated with Planned vs Actual in a future version.
+
 
 ## [0.3.0] - Visual Theme Update
 

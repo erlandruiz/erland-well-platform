@@ -3,27 +3,22 @@ import { formatFixed } from "erland-well-core";
 import { getUnitConfig } from "../../config/units";
 import "./PlanView2D.css";
 
-function PlanView2D({ results, unitSystem }) {
-  const unitConfig = getUnitConfig(unitSystem);
+const TRAJECTORY_DISPLAY_MODES = {
+  PLANNED: "planned",
+  ACTUAL: "actual",
+  BOTH: "both",
+};
 
-  const eastValues = results.map((row) => row.east);
-  const northValues = results.map((row) => row.north);
-  const mdValues = results.map((row) => row.md);
+const TRAJECTORY_COLORS = {
+  planned: "#38bdf8",
+  actual: "#f59e0b",
+  wellhead: "#22c55e",
+};
 
-  const firstStation = results[0];
-  const lastStation = results[results.length - 1];
-
-  const maxMd = Math.max(...mdValues, 0);
-  const mdColorValues = mdValues.map((md) => -md);
-
-  const horizontalOffsets = results.map((row) =>
-    Math.sqrt(row.north ** 2 + row.east ** 2)
-  );
-
-  const maxHorizontalOffset = Math.max(...horizontalOffsets, 0);
-
-  const hoverText = results.map(
+function createHoverText(results, unitConfig, label) {
+  return results.map(
     (row, index) =>
+      `${label}<br>` +
       `Station: ${index + 1}<br>` +
       `MD: ${formatFixed(row.md, 2)} ${unitConfig.lengthUnit}<br>` +
       `INC: ${formatFixed(row.inc, 2)} ${unitConfig.angleUnit}<br>` +
@@ -31,8 +26,163 @@ function PlanView2D({ results, unitSystem }) {
       `TVD: ${formatFixed(row.tvd, 15)} ${unitConfig.lengthUnit}<br>` +
       `North: ${formatFixed(row.north, 15)} ${unitConfig.lengthUnit}<br>` +
       `East: ${formatFixed(row.east, 15)} ${unitConfig.lengthUnit}<br>` +
-      `DLS: ${formatFixed(row.dls, 15)} ${unitConfig.dlsUnit}`
+      `DLS: ${formatFixed(row.dls, 15)} ${unitConfig.dlsUnit}`,
   );
+}
+
+function createTrajectoryTrace({
+  results,
+  unitConfig,
+  name,
+  color,
+  dash = "solid",
+}) {
+  return {
+    x: results.map((row) => row.east),
+    y: results.map((row) => row.north),
+    text: createHoverText(results, unitConfig, name),
+    type: "scatter",
+    mode: "lines+markers",
+    name,
+    line: {
+      width: 3,
+      color,
+      dash,
+    },
+    marker: {
+      size: 7,
+      color,
+    },
+    hovertemplate: "%{text}<extra></extra>",
+  };
+}
+
+function createTdTrace({ station, unitConfig, name, color }) {
+  return {
+    x: [station?.east ?? 0],
+    y: [station?.north ?? 0],
+    type: "scatter",
+    mode: "markers+text",
+    name,
+    text: [name],
+    textposition: "bottom center",
+    marker: {
+      size: 12,
+      color,
+    },
+    hovertemplate:
+      `${name}<br>` +
+      `MD: ${formatFixed(station?.md ?? 0, 2)} ${unitConfig.lengthUnit}<br>` +
+      `East: %{x} ${unitConfig.lengthUnit}<br>` +
+      `North: %{y} ${unitConfig.lengthUnit}<extra></extra>`,
+  };
+}
+
+function PlanView2D({
+  results = [],
+  plannedResults,
+  actualResults,
+  unitSystem,
+  trajectoryDisplayMode = TRAJECTORY_DISPLAY_MODES.ACTUAL,
+}) {
+  const unitConfig = getUnitConfig(unitSystem);
+
+  /*
+   * Compatibilidad temporal:
+   * Si App.jsx todavía envía solo `results`, usamos eso como actual.
+   *
+   * Temporary compatibility:
+   * If App.jsx still sends only `results`, we use it as actual.
+   */
+  const plannedTrajectory = plannedResults ?? results;
+  const actualTrajectory = actualResults ?? results;
+
+  const shouldShowPlanned =
+    trajectoryDisplayMode === TRAJECTORY_DISPLAY_MODES.PLANNED ||
+    trajectoryDisplayMode === TRAJECTORY_DISPLAY_MODES.BOTH;
+
+  const shouldShowActual =
+    trajectoryDisplayMode === TRAJECTORY_DISPLAY_MODES.ACTUAL ||
+    trajectoryDisplayMode === TRAJECTORY_DISPLAY_MODES.BOTH;
+
+  const visibleTrajectories = [
+    ...(shouldShowPlanned ? plannedTrajectory : []),
+    ...(shouldShowActual ? actualTrajectory : []),
+  ];
+
+  const firstStation =
+    actualTrajectory[0] ?? plannedTrajectory[0] ?? visibleTrajectories[0];
+
+  const lastPlannedStation = plannedTrajectory[plannedTrajectory.length - 1];
+  const lastActualStation = actualTrajectory[actualTrajectory.length - 1];
+
+  const horizontalOffsets = visibleTrajectories.map((row) =>
+    Math.sqrt(row.north ** 2 + row.east ** 2),
+  );
+
+  const maxHorizontalOffset = Math.max(...horizontalOffsets, 0);
+
+  const plotData = [];
+
+  if (shouldShowPlanned && plannedTrajectory.length > 0) {
+    plotData.push(
+      createTrajectoryTrace({
+        results: plannedTrajectory,
+        unitConfig,
+        name: "Planned",
+        color: TRAJECTORY_COLORS.planned,
+        dash: "dash",
+      }),
+    );
+
+    plotData.push(
+      createTdTrace({
+        station: lastPlannedStation,
+        unitConfig,
+        name: "TD Planned",
+        color: TRAJECTORY_COLORS.planned,
+      }),
+    );
+  }
+
+  if (shouldShowActual && actualTrajectory.length > 0) {
+    plotData.push(
+      createTrajectoryTrace({
+        results: actualTrajectory,
+        unitConfig,
+        name: "Actual",
+        color: TRAJECTORY_COLORS.actual,
+        dash: "solid",
+      }),
+    );
+
+    plotData.push(
+      createTdTrace({
+        station: lastActualStation,
+        unitConfig,
+        name: "TD Actual",
+        color: TRAJECTORY_COLORS.actual,
+      }),
+    );
+  }
+
+  plotData.push({
+    x: [firstStation?.east ?? 0],
+    y: [firstStation?.north ?? 0],
+    type: "scatter",
+    mode: "markers+text",
+    name: "Wellhead",
+    text: ["Wellhead"],
+    textposition: "top center",
+    marker: {
+      size: 12,
+      color: TRAJECTORY_COLORS.wellhead,
+    },
+    hovertemplate:
+      `Wellhead<br>` +
+      `East: %{x} ${unitConfig.lengthUnit}<br>` +
+      `North: %{y} ${unitConfig.lengthUnit}<extra></extra>`,
+  });
 
   return (
     <section className="plan-view-2d">
@@ -48,10 +198,8 @@ function PlanView2D({ results, unitSystem }) {
         </div>
 
         <div className="plan-view-2d__summary">
-          <span>Stations: {results.length}</span>
-          <span>
-            TD: {formatFixed(lastStation?.md ?? 0, 2)} {unitConfig.lengthUnit}
-          </span>
+          <span>Planned: {plannedTrajectory.length}</span>
+          <span>Actual: {actualTrajectory.length}</span>
           <span>
             Max Offset: {formatFixed(maxHorizontalOffset, 2)}{" "}
             {unitConfig.lengthUnit}
@@ -60,80 +208,16 @@ function PlanView2D({ results, unitSystem }) {
       </div>
 
       <Plot
-        data={[
-          {
-            x: eastValues,
-            y: northValues,
-            text: hoverText,
-            type: "scatter",
-            mode: "lines+markers",
-            name: "Well Path",
-            line: {
-              width: 3,
-              color: "#38bdf8",
-            },
-            marker: {
-              size: 8,
-              color: mdColorValues,
-              cmin: -maxMd,
-              cmax: 0,
-              colorscale: "Viridis",
-              colorbar: {
-                title: {
-                  text: `MD (${unitConfig.lengthUnit})`,
-                },
-                tickvals: [-maxMd, -maxMd / 2, 0],
-                ticktext: [
-                  formatFixed(maxMd, 2),
-                  formatFixed(maxMd / 2, 2),
-                  "0.00",
-                ],
-              },
-            },
-            hovertemplate: "%{text}<extra></extra>",
-          },
-          {
-            x: [firstStation?.east ?? 0],
-            y: [firstStation?.north ?? 0],
-            type: "scatter",
-            mode: "markers+text",
-            name: "Wellhead",
-            text: ["Wellhead"],
-            textposition: "top center",
-            marker: {
-              size: 12,
-              color: "#22c55e",
-            },
-            hovertemplate:
-              `Wellhead<br>` +
-              `East: %{x} ${unitConfig.lengthUnit}<br>` +
-              `North: %{y} ${unitConfig.lengthUnit}<extra></extra>`,
-          },
-          {
-            x: [lastStation?.east ?? 0],
-            y: [lastStation?.north ?? 0],
-            type: "scatter",
-            mode: "markers+text",
-            name: "TD",
-            text: ["TD"],
-            textposition: "bottom center",
-            marker: {
-              size: 12,
-              color: "#f97316",
-            },
-            hovertemplate:
-              `TD<br>` +
-              `MD: ${formatFixed(lastStation?.md ?? 0, 2)} ${
-                unitConfig.lengthUnit
-              }<br>` +
-              `East: %{x} ${unitConfig.lengthUnit}<br>` +
-              `North: %{y} ${unitConfig.lengthUnit}<extra></extra>`,
-          },
-        ]}
+        data={plotData}
         layout={{
           autosize: true,
           title: {
-            text: `Plan View - East vs North (${unitConfig.lengthUnit})`,
+            text: `Plan View<br><sup>East vs North (${unitConfig.lengthUnit})</sup>`,
+            x: 0.5,
+            xanchor: "center",
+            font: {
+              size: 14,
+            },
           },
           xaxis: {
             title: {

@@ -1,0 +1,165 @@
+.planned-actual-results {
+  margin-top: 2rem;
+}
+
+.planned-actual-results__header {
+  margin-bottom: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  background:
+    linear-gradient(135deg, rgba(56, 189, 248, 0.06), transparent 35%),
+    linear-gradient(180deg, var(--color-surface-soft), var(--color-surface));
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.16);
+}
+
+.planned-actual-results__title {
+  margin: 0 0 0.35rem;
+  color: var(--color-primary);
+  font-size: 1.25rem;
+}
+
+.planned-actual-results__description {
+  margin: 0;
+  color: var(--color-text-soft);
+}
+
+.planned-actual-results__tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  background:
+    linear-gradient(180deg, var(--color-surface-soft), var(--color-surface));
+}
+
+.planned-actual-results__tab {
+  flex: 1;
+  min-width: 180px;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--color-text-soft);
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.planned-actual-results__tab:hover {
+  color: var(--color-text);
+  transform: translateY(-1px);
+}
+
+.planned-actual-results__tab--planned:hover {
+  border-color: var(--color-planned);
+}
+
+.planned-actual-results__tab--actual:hover {
+  border-color: var(--color-actual);
+}
+
+.planned-actual-results__tab--comparison:hover {
+  border-color: var(--color-primary);
+}
+
+.planned-actual-results__tab--planned.planned-actual-results__tab--active {
+  border-color: var(--color-planned);
+  background: linear-gradient(135deg, var(--color-planned), #0284c7);
+  color: #ffffff;
+  box-shadow: 0 12px 24px rgba(56, 189, 248, 0.22);
+}
+
+.planned-actual-results__tab--actual.planned-actual-results__tab--active {
+  border-color: var(--color-actual);
+  background: linear-gradient(135deg, var(--color-actual), #ea580c);
+  color: #ffffff;
+  box-shadow: 0 12px 24px rgba(245, 158, 11, 0.22);
+}
+
+.planned-actual-results__tab--comparison.planned-actual-results__tab--active {
+  border-color: var(--color-primary);
+  background:
+    linear-gradient(135deg, rgba(56, 189, 248, 0.95), rgba(245, 158, 11, 0.95));
+  color: #ffffff;
+  box-shadow: 0 12px 24px rgba(56, 189, 248, 0.18);
+}
+
+.planned-actual-results__panel {
+  border-radius: 16px;
+}
+
+/*
+ * Español:
+ * SurveyTable ya tiene su propio margen superior.
+ * Aquí lo reducimos para que encaje mejor dentro de las pestañas de resultados.
+ *
+ * English:
+ * SurveyTable already has its own top margin.
+ * Here we reduce it so it fits better inside the results tabs.
+ */
+.planned-actual-results .survey-table {
+  margin-top: 0;
+}
+
+.planned-actual-results__comparison-placeholder {
+  padding: 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent 14rem),
+    linear-gradient(180deg, var(--color-surface-soft), var(--color-surface));
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.16);
+}
+
+.planned-actual-results__comparison-placeholder h3 {
+  margin: 0 0 0.5rem;
+  color: var(--color-primary);
+  font-size: 1.1rem;
+}
+
+.planned-actual-results__comparison-placeholder p {
+  margin: 0;
+  color: var(--color-text-soft);
+}
+
+.planned-actual-results__summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.planned-actual-results__summary span {
+  padding: 0.45rem 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--color-text);
+  font-size: 0.85rem;
+}
+
+@media screen and (max-width: 640px) {
+  .planned-actual-results {
+    margin-top: 1rem;
+  }
+
+  .planned-actual-results__tabs {
+    padding: 0.4rem;
+  }
+
+  .planned-actual-results__tab {
+    min-width: 100%;
+  }
+
+  .planned-actual-results__comparison-placeholder {
+    padding: 0.75rem;
+  }
+}

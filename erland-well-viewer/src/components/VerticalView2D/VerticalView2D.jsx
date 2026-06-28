@@ -3,33 +3,24 @@ import { formatFixed } from "erland-well-core";
 import { getUnitConfig } from "../../config/units";
 import "./VerticalView2D.css";
 
-function VerticalView2D({
-  results,
-  unitSystem,
-  verticalSectionDirection,
-  onChangeVerticalSectionDirection,
-}) {
-  const unitConfig = getUnitConfig(unitSystem);
+const TRAJECTORY_DISPLAY_MODES = {
+  PLANNED: "planned",
+  ACTUAL: "actual",
+  BOTH: "both",
+};
 
-  const directionNumber = Number(verticalSectionDirection) || 0;
+const TRAJECTORY_COLORS = {
+  planned: "#38bdf8",
+  actual: "#f59e0b",
+  wellhead: "#22c55e",
+};
 
-  const mdValues = results.map((row) => row.md);
-  const maxMd = Math.max(...mdValues, 0);
-  const mdColorValues = mdValues.map((md) => -md);
-
-  const firstStation = results[0];
-  const lastStation = results[results.length - 1];
-
-  const verticalSectionValues = results.map((row) => row.verticalSection);
-
-  const tvdValues = results.map((row) => row.tvd);
-
-  const lastVerticalSection = lastStation?.verticalSection ?? 0;
-
-  const hoverText = results.map((row, index) => {
+function createHoverText(results, unitConfig, directionNumber, label) {
+  return results.map((row, index) => {
     const verticalSection = row.verticalSection;
 
     return (
+      `${label}<br>` +
       `Station: ${index + 1}<br>` +
       `MD: ${formatFixed(row.md, 2)} ${unitConfig.lengthUnit}<br>` +
       `INC: ${formatFixed(row.inc, 2)} ${unitConfig.angleUnit}<br>` +
@@ -47,6 +38,179 @@ function VerticalView2D({
       `East: ${formatFixed(row.east, 15)} ${unitConfig.lengthUnit}<br>` +
       `DLS: ${formatFixed(row.dls, 15)} ${unitConfig.dlsUnit}`
     );
+  });
+}
+
+function createTrajectoryTrace({
+  results,
+  unitConfig,
+  directionNumber,
+  name,
+  color,
+  dash = "solid",
+}) {
+  return {
+    x: results.map((row) => row.verticalSection),
+    y: results.map((row) => row.tvd),
+    text: createHoverText(results, unitConfig, directionNumber, name),
+    type: "scatter",
+    mode: "lines+markers",
+    name,
+    line: {
+      width: 3,
+      color,
+      dash,
+    },
+    marker: {
+      size: 7,
+      color,
+    },
+    hovertemplate: "%{text}<extra></extra>",
+  };
+}
+
+function createTdTrace({ station, unitConfig, name, color }) {
+  return {
+    x: [station?.verticalSection ?? 0],
+    y: [station?.tvd ?? 0],
+    type: "scatter",
+    mode: "markers+text",
+    name,
+    text: [name],
+    textposition: "bottom center",
+    marker: {
+      size: 12,
+      color,
+    },
+    hovertemplate:
+      `${name}<br>` +
+      `MD: ${formatFixed(station?.md ?? 0, 2)} ${unitConfig.lengthUnit}<br>` +
+      `Vertical Section: %{x} ${unitConfig.lengthUnit}<br>` +
+      `TVD: %{y} ${unitConfig.lengthUnit}<extra></extra>`,
+  };
+}
+
+function VerticalView2D({
+  results = [],
+  plannedResults,
+  actualResults,
+  unitSystem,
+  verticalSectionDirection,
+  onChangeVerticalSectionDirection,
+  trajectoryDisplayMode = TRAJECTORY_DISPLAY_MODES.ACTUAL,
+}) {
+  const unitConfig = getUnitConfig(unitSystem);
+
+  const directionNumber = Number(verticalSectionDirection) || 0;
+
+  /*
+   * Español:
+   * Compatibilidad temporal con la versión anterior.
+   * Si App.jsx todavía envía solo `results`, usamos esos resultados como trayectoria real.
+   *
+   * English:
+   * Temporary compatibility with the previous version.
+   * If App.jsx still sends only `results`, we use those results as the actual trajectory.
+   */
+  const plannedTrajectory = plannedResults ?? results;
+  const actualTrajectory = actualResults ?? results;
+
+  const shouldShowPlanned =
+    trajectoryDisplayMode === TRAJECTORY_DISPLAY_MODES.PLANNED ||
+    trajectoryDisplayMode === TRAJECTORY_DISPLAY_MODES.BOTH;
+
+  const shouldShowActual =
+    trajectoryDisplayMode === TRAJECTORY_DISPLAY_MODES.ACTUAL ||
+    trajectoryDisplayMode === TRAJECTORY_DISPLAY_MODES.BOTH;
+
+  const visibleTrajectories = [
+    ...(shouldShowPlanned ? plannedTrajectory : []),
+    ...(shouldShowActual ? actualTrajectory : []),
+  ];
+
+  const firstStation =
+    actualTrajectory[0] ?? plannedTrajectory[0] ?? visibleTrajectories[0];
+
+  const lastPlannedStation = plannedTrajectory[plannedTrajectory.length - 1];
+  const lastActualStation = actualTrajectory[actualTrajectory.length - 1];
+
+  /*
+   * Español:
+   * Para el resumen usamos la trayectoria real como referencia principal,
+   * porque normalmente representa cómo va el pozo en campo.
+   *
+   * English:
+   * For the summary, we use the actual trajectory as the main reference,
+   * because it usually represents the current field well path.
+   */
+  const summaryStation =
+    actualTrajectory[actualTrajectory.length - 1] ??
+    plannedTrajectory[plannedTrajectory.length - 1];
+
+  const summaryVerticalSection = summaryStation?.verticalSection ?? 0;
+
+  const plotData = [];
+
+  if (shouldShowPlanned && plannedTrajectory.length > 0) {
+    plotData.push(
+      createTrajectoryTrace({
+        results: plannedTrajectory,
+        unitConfig,
+        directionNumber,
+        name: "Planned",
+        color: TRAJECTORY_COLORS.planned,
+        dash: "dash",
+      }),
+    );
+
+    plotData.push(
+      createTdTrace({
+        station: lastPlannedStation,
+        unitConfig,
+        name: "TD Planned",
+        color: TRAJECTORY_COLORS.planned,
+      }),
+    );
+  }
+
+  if (shouldShowActual && actualTrajectory.length > 0) {
+    plotData.push(
+      createTrajectoryTrace({
+        results: actualTrajectory,
+        unitConfig,
+        directionNumber,
+        name: "Actual",
+        color: TRAJECTORY_COLORS.actual,
+        dash: "solid",
+      }),
+    );
+
+    plotData.push(
+      createTdTrace({
+        station: lastActualStation,
+        unitConfig,
+        name: "TD Actual",
+        color: TRAJECTORY_COLORS.actual,
+      }),
+    );
+  }
+
+  plotData.push({
+    x: [0],
+    y: [firstStation?.tvd ?? 0],
+    type: "scatter",
+    mode: "markers+text",
+    name: "Wellhead",
+    text: ["Wellhead"],
+    textposition: "top center",
+    marker: {
+      size: 12,
+      color: TRAJECTORY_COLORS.wellhead,
+    },
+    hovertemplate:
+      `Wellhead<br>` +
+      `Vertical Section: %{x} ${unitConfig.lengthUnit}<br>` +
+      `TVD: %{y} ${unitConfig.lengthUnit}<extra></extra>`,
   });
 
   return (
@@ -80,10 +244,15 @@ function VerticalView2D({
 
           <div className="vertical-view-2d__summary">
             <span>
-              TD: {formatFixed(lastStation?.md ?? 0, 2)} {unitConfig.lengthUnit}
+              Planned: {plannedTrajectory.length}
             </span>
+
             <span>
-              VS at TD: {formatFixed(lastVerticalSection, 2)}{" "}
+              Actual: {actualTrajectory.length}
+            </span>
+
+            <span>
+              VS at TD: {formatFixed(summaryVerticalSection, 2)}{" "}
               {unitConfig.lengthUnit}
             </span>
           </div>
@@ -91,76 +260,7 @@ function VerticalView2D({
       </div>
 
       <Plot
-        data={[
-          {
-            x: verticalSectionValues,
-            y: tvdValues,
-            text: hoverText,
-            type: "scatter",
-            mode: "lines+markers",
-            name: "Vertical Section",
-            line: {
-              width: 3,
-              color: "#38bdf8",
-            },
-            marker: {
-              size: 8,
-              color: mdColorValues,
-              cmin: -maxMd,
-              cmax: 0,
-              colorscale: "Viridis",
-              colorbar: {
-                title: {
-                  text: `MD (${unitConfig.lengthUnit})`,
-                },
-                tickvals: [-maxMd, -maxMd / 2, 0],
-                ticktext: [
-                  formatFixed(maxMd, 2),
-                  formatFixed(maxMd / 2, 2),
-                  "0.00",
-                ],
-              },
-            },
-            hovertemplate: "%{text}<extra></extra>",
-          },
-          {
-            x: [0],
-            y: [firstStation?.tvd ?? 0],
-            type: "scatter",
-            mode: "markers+text",
-            name: "Wellhead",
-            text: ["Wellhead"],
-            textposition: "top center",
-            marker: {
-              size: 12,
-              color: "#22c55e",
-            },
-            hovertemplate:
-              `Wellhead<br>` +
-              `Vertical Section: %{x} ${unitConfig.lengthUnit}<br>` +
-              `TVD: %{y} ${unitConfig.lengthUnit}<extra></extra>`,
-          },
-          {
-            x: [lastVerticalSection],
-            y: [lastStation?.tvd ?? 0],
-            type: "scatter",
-            mode: "markers+text",
-            name: "TD",
-            text: ["TD"],
-            textposition: "bottom center",
-            marker: {
-              size: 12,
-              color: "#f97316",
-            },
-            hovertemplate:
-              `TD<br>` +
-              `MD: ${formatFixed(lastStation?.md ?? 0, 2)} ${
-                unitConfig.lengthUnit
-              }<br>` +
-              `Vertical Section: %{x} ${unitConfig.lengthUnit}<br>` +
-              `TVD: %{y} ${unitConfig.lengthUnit}<extra></extra>`,
-          },
-        ]}
+        data={plotData}
         layout={{
           autosize: true,
           title: {
@@ -197,7 +297,7 @@ function VerticalView2D({
             y: 1.12,
           },
           margin: {
-            l: 80,
+            l: 70,
             r: 30,
             t: 90,
             b: 70,
