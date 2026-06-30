@@ -15,6 +15,90 @@ const TRAJECTORY_COLORS = {
   wellhead: "#22c55e",
 };
 
+/*
+ * Español:
+ * Devuelve una escala de color para la barra vertical MD
+ * según el modo de visualización seleccionado.
+ *
+ * English:
+ * Returns a color scale for the vertical MD colorbar
+ * based on the selected display mode.
+ */
+function getMdColorScale(trajectoryDisplayMode) {
+  if (trajectoryDisplayMode === TRAJECTORY_DISPLAY_MODES.PLANNED) {
+    return [
+      [0, "#0f172a"],
+      [0.2, "#1e3a8a"],
+      [0.45, "#2563eb"],
+      [0.7, "#38bdf8"],
+      [1, "#e0f2fe"],
+    ];
+  }
+
+  if (trajectoryDisplayMode === TRAJECTORY_DISPLAY_MODES.ACTUAL) {
+    return [
+      [0, "#1c1917"],
+      [0.2, "#9a3412"],
+      [0.45, "#ea580c"],
+      [0.7, "#f59e0b"],
+      [1, "#fef3c7"],
+    ];
+  }
+
+  return "Viridis";
+}
+
+/*
+ * Español:
+ * Devuelve el título de la barra MD para que también sea más claro.
+ *
+ * English:
+ * Returns the MD colorbar title so it is also clearer.
+ */
+function getMdColorbarTitle(trajectoryDisplayMode, unitConfig) {
+  if (trajectoryDisplayMode === TRAJECTORY_DISPLAY_MODES.PLANNED) {
+    return `Planned<br>MD<br>(${unitConfig.lengthUnit})`;
+  }
+
+  if (trajectoryDisplayMode === TRAJECTORY_DISPLAY_MODES.ACTUAL) {
+    return `Actual<br>MD<br>(${unitConfig.lengthUnit})`;
+  }
+
+  return `MD<br>(${unitConfig.lengthUnit})`;
+}
+
+/*
+ * Español:
+ * Ajusta el tamaño de la barra MD según el ancho de pantalla.
+ * En celular usamos valores más compactos para evitar que el gráfico
+ * se desplace demasiado hacia la izquierda.
+ *
+ * English:
+ * Adjusts the MD colorbar size based on screen width.
+ * On mobile, we use more compact values to prevent the chart
+ * from shifting too far to the left.
+ */
+function getColorbarResponsiveStyle() {
+  const isMobile =
+    typeof window !== "undefined" && window.innerWidth <= 430;
+
+  if (isMobile) {
+    return {
+      titleFontSize: 10,
+      tickFontSize: 9,
+      thickness: 12,
+      xpad: 4,
+    };
+  }
+
+  return {
+    titleFontSize: 13,
+    tickFontSize: 12,
+    thickness: 24,
+    xpad: 10,
+  };
+}
+
 function createHoverText(results, unitConfig, label) {
   return results.map(
     (row, index) =>
@@ -28,6 +112,15 @@ function createHoverText(results, unitConfig, label) {
       `East: ${formatFixed(row.east, 15)} ${unitConfig.lengthUnit}<br>` +
       `DLS: ${formatFixed(row.dls, 15)} ${unitConfig.dlsUnit}`,
   );
+}
+
+function getMaxMdFromTrajectories(...trajectories) {
+  const mdValues = trajectories
+    .flat()
+    .map((row) => row.md)
+    .filter((md) => Number.isFinite(md));
+
+  return Math.max(...mdValues, 0);
 }
 
 function createTrajectoryTrace({
@@ -45,16 +138,85 @@ function createTrajectoryTrace({
     type: "scatter3d",
     mode: "lines+markers",
     name,
+
+    /*
+     * Español:
+     * La línea mantiene el color técnico de la trayectoria:
+     * Planned azul, Actual naranja.
+     *
+     * English:
+     * The line keeps the technical trajectory color:
+     * Planned blue, Actual orange.
+     */
     line: {
       width: 7,
       color,
       dash,
     },
+
+    /*
+     * Español:
+     * Los marcadores recuperan la escala visual por MD.
+     * La barra aparece una sola vez según el modo seleccionado.
+     *
+     * English:
+     * Markers restore the visual MD scale.
+     * The colorbar appears only once depending on the selected mode.
+     */
     marker: {
-      size: 4,
+      size: 5,
       color,
     },
+
     hovertemplate: "%{text}<extra></extra>",
+  };
+}
+
+function createMdColorbarTrace({ maxMd, unitConfig, trajectoryDisplayMode }) {
+  const colorbarStyle = getColorbarResponsiveStyle();
+  return {
+    x: [0, 0],
+    y: [0, 0],
+    z: [0, 0],
+    type: "scatter3d",
+    mode: "markers",
+    name: "MD Scale",
+    showlegend: false,
+    hoverinfo: "skip",
+    marker: {
+      size: 0.1,
+      opacity: 0,
+
+      /*
+       * Español:
+       * Esta traza solo crea una escala visual de MD.
+       * No pinta las trayectorias Planned ni Actual.
+       *
+       * English:
+       * This trace only creates a visual MD scale.
+       * It does not color the Planned or Actual trajectories.
+       */
+      color: [-maxMd, 0],
+      cmin: -maxMd,
+      cmax: 0,
+      colorscale: getMdColorScale(trajectoryDisplayMode),
+      showscale: true,
+      colorbar: {
+        title: {
+          text: getMdColorbarTitle(trajectoryDisplayMode, unitConfig),
+          font: {
+            size: colorbarStyle.titleFontSize,
+          },
+        },
+        tickfont: {
+          size: colorbarStyle.tickFontSize,
+        },
+        thickness: colorbarStyle.thickness,
+        xpad: colorbarStyle.xpad,
+        tickvals: [-maxMd, -maxMd / 2, 0],
+        ticktext: [formatFixed(maxMd, 2), formatFixed(maxMd / 2, 2), "0.00"],
+      },
+    },
   };
 }
 
@@ -120,6 +282,17 @@ function WellPath3D({
   const plannedLastStation = plannedTrajectory[plannedTrajectory.length - 1];
   const actualLastStation = actualTrajectory[actualTrajectory.length - 1];
 
+  const plannedMaxMd = getMaxMdFromTrajectories(plannedTrajectory);
+  const actualMaxMd = getMaxMdFromTrajectories(actualTrajectory);
+
+  const visibleMaxMd = getMaxMdFromTrajectories(
+    showPlanned ? plannedTrajectory : [],
+    showActual ? actualTrajectory : [],
+  );
+
+  const actualProgressPercent =
+    plannedMaxMd > 0 ? Math.min((actualMaxMd / plannedMaxMd) * 100, 100) : 0;
+
   const plotData = [
     showPlanned &&
       plannedTrajectory.length > 0 &&
@@ -138,6 +311,13 @@ function WellPath3D({
         unitConfig,
         name: "Actual",
         color: TRAJECTORY_COLORS.actual,
+      }),
+
+    visibleMaxMd > 0 &&
+      createMdColorbarTrace({
+        maxMd: visibleMaxMd,
+        unitConfig,
+        trajectoryDisplayMode,
       }),
 
     {
@@ -193,9 +373,16 @@ function WellPath3D({
           <span>Actual: {actualTrajectory.length}</span>
 
           <span>
-            TD Actual: {formatFixed(actualLastStation?.md ?? 0, 2)}{" "}
-            {unitConfig.lengthUnit}
+            TD Planned: {formatFixed(plannedMaxMd, 2)} {unitConfig.lengthUnit}
           </span>
+
+          <span>
+            TD Actual: {formatFixed(actualMaxMd, 2)} {unitConfig.lengthUnit}
+          </span>
+
+          {trajectoryDisplayMode === TRAJECTORY_DISPLAY_MODES.ACTUAL && (
+            <span>Real Progress: {formatFixed(actualProgressPercent, 2)}%</span>
+          )}
         </div>
       </div>
 
