@@ -66,6 +66,19 @@ The comparison uses the actual survey MD as the reference. For each actual stati
 
 * The project saved in `localStorage` now preserves planned surveys, actual surveys, and display mode.
 
+- Se mejoró el diseño responsive de **Vista Planta 2D**, **Vista Vertical 2D** y **Vista 3D**.
+- Improved the responsive layout for **Plan View 2D**, **Vertical Section View 2D**, and **3D Well Path**.
+
+- Se agregaron leyendas compactas, símbolos de leyenda más pequeños e indicadores de resumen optimizados para celular.
+- Added compact legends, smaller legend markers, and mobile-optimized summary indicators.
+
+- Se mejoró la lectura de la barra MD en los modos **Propuesto**, **Real** y **Ambos**.
+- Improved MD colorbar readability across **Planned**, **Actual**, and **Both** display modes.
+
+- Se conservó el diseño desktop mientras se optimizó la experiencia móvil para uso en campo.
+- Preserved the desktop layout while optimizing the mobile experience for field usage.
+  
+  
 ### Notas / Notes
 
 **Español:**

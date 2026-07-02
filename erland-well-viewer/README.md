@@ -802,6 +802,23 @@ Se ajustó el título del gráfico de `VerticalView2D` para evitar cortes visual
 **English:**
 The `VerticalView2D` chart title was adjusted to avoid visual clipping on small screens such as iPhone 12 Pro.
 
+The 2D Plan View, Vertical Section View, and 3D Well Path view include responsive mobile adjustments for field usage.
+
+**Español:**
+Las vistas **Vista Planta 2D**, **Vista Vertical 2D** y **Vista 3D** incluyen ajustes responsivos para mejorar el uso en celulares, especialmente en pantallas tipo iPhone.
+
+**English:**
+The **Plan View 2D**, **Vertical Section View 2D**, and **3D Well Path** views include responsive adjustments to improve mobile usage, especially on iPhone-sized screens.
+
+Mejoras en celular / Mobile improvements:
+
+- Indicadores de resumen más compactos. / More compact summary indicators.
+- Leyendas más pequeñas. / Smaller chart legends.
+- Símbolos de leyenda más pequeños. / Smaller legend markers.
+- Barras MD responsivas. / Responsive MD colorbars.
+- Mejor espaciado en pantallas pequeñas. / Improved spacing on small screens.
+- Diseño desktop conservado sin cambios visuales importantes. / Desktop layout preserved without major visual changes.
+
 ---
 
 ## Future Palette Selector / Futuro selector de paletas

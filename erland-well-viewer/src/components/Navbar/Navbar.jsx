@@ -69,7 +69,7 @@ function Navbar({
           Nuevo proyecto
         </button>
 
-        <span className="navbar__badge">v0.3.0</span>
+        <span className="navbar__badge">v0.4.0</span>
       </div>
     </header>
   );
