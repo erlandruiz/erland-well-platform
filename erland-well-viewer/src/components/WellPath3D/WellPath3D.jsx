@@ -79,8 +79,7 @@ function getMdColorbarTitle(trajectoryDisplayMode, unitConfig) {
  * from shifting too far to the left.
  */
 function getColorbarResponsiveStyle() {
-  const isMobile =
-    typeof window !== "undefined" && window.innerWidth <= 430;
+  const isMobile = typeof window !== "undefined" && window.innerWidth <= 430;
 
   if (isMobile) {
     return {
@@ -96,6 +95,63 @@ function getColorbarResponsiveStyle() {
     tickFontSize: 12,
     thickness: 24,
     xpad: 10,
+  };
+}
+/*
+ * Español:
+ * Ajusta la leyenda solo en celular.
+ * En desktop mantenemos el tamaño original.
+ *
+ * English:
+ * Adjusts the legend only on mobile.
+ * On desktop, we keep the original size.
+ */
+function getPlotResponsiveStyle() {
+  const isMobile = typeof window !== "undefined" && window.innerWidth <= 430;
+
+  if (isMobile) {
+    return {
+      titleFontSize: 10,
+      legendFontSize: 8,
+      legendItemWidth: 22,
+      marginTop: 75,
+    };
+  }
+
+  return {
+    titleFontSize: 14,
+    legendFontSize: 12,
+    legendItemWidth: 30,
+    marginTop: 80,
+  };
+}
+
+/*
+ * Español:
+ * Ajusta líneas y marcadores según el dispositivo.
+ * En 3D también reducimos la línea porque afecta el símbolo de la leyenda.
+ *
+ * English:
+ * Adjusts lines and markers depending on the device.
+ * In 3D we also reduce the line because it affects the legend symbol.
+ */
+function getMarkerResponsiveStyle() {
+  const isMobile = typeof window !== "undefined" && window.innerWidth <= 430;
+
+  if (isMobile) {
+    return {
+      trajectoryLineWidth: 4,
+      trajectoryMarkerSize: 3,
+      tdMarkerSize: 5,
+      wellheadMarkerSize: 5,
+    };
+  }
+
+  return {
+    trajectoryLineWidth: 7,
+    trajectoryMarkerSize: 5,
+    tdMarkerSize: 8,
+    wellheadMarkerSize: 8,
   };
 }
 
@@ -128,6 +184,8 @@ function createTrajectoryTrace({
   unitConfig,
   name,
   color,
+  lineWidth,
+  markerSize,
   dash = "solid",
 }) {
   return {
@@ -149,7 +207,7 @@ function createTrajectoryTrace({
      * Planned blue, Actual orange.
      */
     line: {
-      width: 7,
+      width: lineWidth,
       color,
       dash,
     },
@@ -164,7 +222,7 @@ function createTrajectoryTrace({
      * The colorbar appears only once depending on the selected mode.
      */
     marker: {
-      size: 5,
+      size: markerSize,
       color,
     },
 
@@ -220,7 +278,7 @@ function createMdColorbarTrace({ maxMd, unitConfig, trajectoryDisplayMode }) {
   };
 }
 
-function createTdTrace({ station, unitConfig, name, color }) {
+function createTdTrace({ station, unitConfig, name, color, markerSize }) {
   if (!station) {
     return null;
   }
@@ -235,7 +293,7 @@ function createTdTrace({ station, unitConfig, name, color }) {
     text: [name],
     textposition: "bottom center",
     marker: {
-      size: 8,
+      size: markerSize,
       color,
     },
     hovertemplate:
@@ -255,6 +313,8 @@ function WellPath3D({
   trajectoryDisplayMode = TRAJECTORY_DISPLAY_MODES.ACTUAL,
 }) {
   const unitConfig = getUnitConfig(unitSystem);
+  const plotResponsiveStyle = getPlotResponsiveStyle();
+  const markerStyle = getMarkerResponsiveStyle();
 
   /*
    * Español:
@@ -301,6 +361,8 @@ function WellPath3D({
         unitConfig,
         name: "Planned",
         color: TRAJECTORY_COLORS.planned,
+        lineWidth: markerStyle.trajectoryLineWidth,
+        markerSize: markerStyle.trajectoryMarkerSize,
         dash: "dash",
       }),
 
@@ -311,6 +373,8 @@ function WellPath3D({
         unitConfig,
         name: "Actual",
         color: TRAJECTORY_COLORS.actual,
+        lineWidth: markerStyle.trajectoryLineWidth,
+        markerSize: markerStyle.trajectoryMarkerSize,
       }),
 
     visibleMaxMd > 0 &&
@@ -330,7 +394,7 @@ function WellPath3D({
       text: ["Wellhead"],
       textposition: "top center",
       marker: {
-        size: 8,
+        size: markerStyle.wellheadMarkerSize,
         color: TRAJECTORY_COLORS.wellhead,
       },
       hovertemplate:
@@ -346,6 +410,7 @@ function WellPath3D({
         unitConfig,
         name: "TD Planned",
         color: TRAJECTORY_COLORS.planned,
+        markerSize: markerStyle.tdMarkerSize,
       }),
 
     showActual &&
@@ -354,6 +419,7 @@ function WellPath3D({
         unitConfig,
         name: "TD Actual",
         color: TRAJECTORY_COLORS.actual,
+        markerSize: markerStyle.tdMarkerSize,
       }),
   ].filter(Boolean);
 
@@ -392,6 +458,9 @@ function WellPath3D({
           autosize: true,
           title: {
             text: `3D Well Path - East / North / TVD (${unitConfig.lengthUnit})`,
+            font: {
+              size: plotResponsiveStyle.titleFontSize,
+            },
           },
           scene: {
             xaxis: {
@@ -435,11 +504,17 @@ function WellPath3D({
             orientation: "h",
             x: 0,
             y: 1.08,
+            font: {
+              size: plotResponsiveStyle.legendFontSize,
+            },
+            itemsizing: "trace",
+            itemwidth: plotResponsiveStyle.legendItemWidth,
+            bgcolor: "rgba(15, 23, 42, 0.85)",
           },
           margin: {
             l: 0,
             r: 0,
-            t: 80,
+            t: plotResponsiveStyle.marginTop,
             b: 0,
           },
           paper_bgcolor: "#0f172a",

@@ -15,6 +15,195 @@ const TRAJECTORY_COLORS = {
   wellhead: "#22c55e",
 };
 
+function getMaxMdFromTrajectories(...trajectories) {
+  const mdValues = trajectories
+    .flat()
+    .map((row) => row.md)
+    .filter((md) => Number.isFinite(md));
+
+  return Math.max(...mdValues, 0);
+}
+
+/*
+ * Español:
+ * Devuelve una escala de color para la barra MD según el modo.
+ *
+ * English:
+ * Returns an MD color scale based on the display mode.
+ */
+function getMdColorScale(trajectoryDisplayMode) {
+  if (trajectoryDisplayMode === TRAJECTORY_DISPLAY_MODES.PLANNED) {
+    return [
+      [0, "#0f172a"],
+      [0.2, "#1e3a8a"],
+      [0.45, "#2563eb"],
+      [0.7, "#38bdf8"],
+      [1, "#e0f2fe"],
+    ];
+  }
+
+  if (trajectoryDisplayMode === TRAJECTORY_DISPLAY_MODES.ACTUAL) {
+    return [
+      [0, "#1c1917"],
+      [0.2, "#9a3412"],
+      [0.45, "#ea580c"],
+      [0.7, "#f59e0b"],
+      [1, "#fef3c7"],
+    ];
+  }
+
+  return "Viridis";
+}
+
+function getMdColorbarTitle(trajectoryDisplayMode, unitConfig) {
+  if (trajectoryDisplayMode === TRAJECTORY_DISPLAY_MODES.PLANNED) {
+    return `Planned<br>MD<br>(${unitConfig.lengthUnit})`;
+  }
+
+  if (trajectoryDisplayMode === TRAJECTORY_DISPLAY_MODES.ACTUAL) {
+    return `Actual<br>MD<br>(${unitConfig.lengthUnit})`;
+  }
+
+  return `MD<br>(${unitConfig.lengthUnit})`;
+}
+
+/*
+ * Español:
+ * En iPhone usamos una barra más compacta.
+ * En desktop mantenemos una barra más visible.
+ *
+ * English:
+ * On iPhone we use a more compact colorbar.
+ * On desktop we keep a more visible colorbar.
+ */
+function getColorbarResponsiveStyle() {
+  const isMobile = typeof window !== "undefined" && window.innerWidth <= 430;
+
+  if (isMobile) {
+    return {
+      titleFontSize: 10,
+      tickFontSize: 9,
+      thickness: 12,
+      xpad: 4,
+    };
+  }
+
+  return {
+    titleFontSize: 13,
+    tickFontSize: 12,
+    thickness: 24,
+    xpad: 10,
+  };
+}
+
+/*
+ * Español:
+ * Ajusta la posición de la leyenda solo en celular.
+ * En desktop mantenemos la posición original.
+ *
+ * English:
+ * Adjusts the legend position only on mobile.
+ * On desktop, we keep the original position.
+ */
+function getPlotResponsiveStyle() {
+  const isMobile = typeof window !== "undefined" && window.innerWidth <= 430;
+
+  if (isMobile) {
+    return {
+      legendX: 0,
+      legendY: -0.18,
+      legendYAnchor: "top",
+      legendFontSize: 8,
+      marginTop: 85,
+      marginLeft: 55,
+      marginBottom: 95,
+    };
+  }
+
+  return {
+    legendX: 0,
+    legendY: 1.12,
+    legendYAnchor: "bottom",
+    legendFontSize: 12,
+    marginTop: 90,
+    marginLeft: 70,
+    marginBottom: 70,
+  };
+}
+
+/*
+ * Español:
+ * Ajusta el tamaño de los marcadores según el dispositivo.
+ *
+ * English:
+ * Adjusts marker sizes depending on the device.
+ */
+function getMarkerResponsiveStyle() {
+  const isMobile = typeof window !== "undefined" && window.innerWidth <= 430;
+
+  if (isMobile) {
+    return {
+      trajectoryMarkerSize: 4,
+      tdMarkerSize: 6,
+      wellheadMarkerSize: 6,
+    };
+  }
+
+  return {
+    trajectoryMarkerSize: 7,
+    tdMarkerSize: 12,
+    wellheadMarkerSize: 12,
+  };
+}
+
+function createMdColorbarTrace({ maxMd, unitConfig, trajectoryDisplayMode }) {
+  const colorbarStyle = getColorbarResponsiveStyle();
+
+  return {
+    x: [0, 0],
+    y: [0, 0],
+    type: "scatter",
+    mode: "markers",
+    name: "MD Scale",
+    showlegend: false,
+    hoverinfo: "skip",
+    marker: {
+      size: 0.1,
+      opacity: 0,
+
+      /*
+       * Español:
+       * Esta traza solo crea la barra visual de MD.
+       * No cambia los colores de las trayectorias.
+       *
+       * English:
+       * This trace only creates the visual MD colorbar.
+       * It does not change the trajectory colors.
+       */
+      color: [-maxMd, 0],
+      cmin: -maxMd,
+      cmax: 0,
+      colorscale: getMdColorScale(trajectoryDisplayMode),
+      showscale: true,
+      colorbar: {
+        title: {
+          text: getMdColorbarTitle(trajectoryDisplayMode, unitConfig),
+          font: {
+            size: colorbarStyle.titleFontSize,
+          },
+        },
+        tickfont: {
+          size: colorbarStyle.tickFontSize,
+        },
+        thickness: colorbarStyle.thickness,
+        xpad: colorbarStyle.xpad,
+        tickvals: [-maxMd, -maxMd / 2, 0],
+        ticktext: [formatFixed(maxMd, 2), formatFixed(maxMd / 2, 2), "0.00"],
+      },
+    },
+  };
+}
+
 function createHoverText(results, unitConfig, label) {
   return results.map(
     (row, index) =>
@@ -35,6 +224,7 @@ function createTrajectoryTrace({
   unitConfig,
   name,
   color,
+  markerSize,
   dash = "solid",
 }) {
   return {
@@ -50,14 +240,14 @@ function createTrajectoryTrace({
       dash,
     },
     marker: {
-      size: 7,
+      size: markerSize,
       color,
     },
     hovertemplate: "%{text}<extra></extra>",
   };
 }
 
-function createTdTrace({ station, unitConfig, name, color }) {
+function createTdTrace({ station, unitConfig, name, color, markerSize }) {
   return {
     x: [station?.east ?? 0],
     y: [station?.north ?? 0],
@@ -67,7 +257,7 @@ function createTdTrace({ station, unitConfig, name, color }) {
     text: [name],
     textposition: "bottom center",
     marker: {
-      size: 12,
+      size: markerSize,
       color,
     },
     hovertemplate:
@@ -86,6 +276,8 @@ function PlanView2D({
   trajectoryDisplayMode = TRAJECTORY_DISPLAY_MODES.ACTUAL,
 }) {
   const unitConfig = getUnitConfig(unitSystem);
+  const plotResponsiveStyle = getPlotResponsiveStyle();
+  const markerStyle = getMarkerResponsiveStyle();
 
   /*
    * Compatibilidad temporal:
@@ -105,6 +297,11 @@ function PlanView2D({
     trajectoryDisplayMode === TRAJECTORY_DISPLAY_MODES.ACTUAL ||
     trajectoryDisplayMode === TRAJECTORY_DISPLAY_MODES.BOTH;
 
+  const visibleMaxMd = getMaxMdFromTrajectories(
+    shouldShowPlanned ? plannedTrajectory : [],
+    shouldShowActual ? actualTrajectory : [],
+  );
+
   const visibleTrajectories = [
     ...(shouldShowPlanned ? plannedTrajectory : []),
     ...(shouldShowActual ? actualTrajectory : []),
@@ -115,6 +312,12 @@ function PlanView2D({
 
   const lastPlannedStation = plannedTrajectory[plannedTrajectory.length - 1];
   const lastActualStation = actualTrajectory[actualTrajectory.length - 1];
+
+  const plannedMaxMd = lastPlannedStation?.md ?? 0;
+  const actualMaxMd = lastActualStation?.md ?? 0;
+
+  const actualProgressPercent =
+    plannedMaxMd > 0 ? Math.min((actualMaxMd / plannedMaxMd) * 100, 100) : 0;
 
   const horizontalOffsets = visibleTrajectories.map((row) =>
     Math.sqrt(row.north ** 2 + row.east ** 2),
@@ -131,6 +334,7 @@ function PlanView2D({
         unitConfig,
         name: "Planned",
         color: TRAJECTORY_COLORS.planned,
+        markerSize: markerStyle.trajectoryMarkerSize,
         dash: "dash",
       }),
     );
@@ -141,6 +345,7 @@ function PlanView2D({
         unitConfig,
         name: "TD Planned",
         color: TRAJECTORY_COLORS.planned,
+        markerSize: markerStyle.tdMarkerSize,
       }),
     );
   }
@@ -152,6 +357,7 @@ function PlanView2D({
         unitConfig,
         name: "Actual",
         color: TRAJECTORY_COLORS.actual,
+        markerSize: markerStyle.trajectoryMarkerSize,
         dash: "solid",
       }),
     );
@@ -162,6 +368,17 @@ function PlanView2D({
         unitConfig,
         name: "TD Actual",
         color: TRAJECTORY_COLORS.actual,
+        markerSize: markerStyle.tdMarkerSize,
+      }),
+    );
+  }
+
+  if (visibleMaxMd > 0) {
+    plotData.push(
+      createMdColorbarTrace({
+        maxMd: visibleMaxMd,
+        unitConfig,
+        trajectoryDisplayMode,
       }),
     );
   }
@@ -175,7 +392,7 @@ function PlanView2D({
     text: ["Wellhead"],
     textposition: "top center",
     marker: {
-      size: 12,
+      size: markerStyle.wellheadMarkerSize,
       color: TRAJECTORY_COLORS.wellhead,
     },
     hovertemplate:
@@ -200,6 +417,19 @@ function PlanView2D({
         <div className="plan-view-2d__summary">
           <span>Planned: {plannedTrajectory.length}</span>
           <span>Actual: {actualTrajectory.length}</span>
+
+          <span>
+            TD Planned: {formatFixed(plannedMaxMd, 2)} {unitConfig.lengthUnit}
+          </span>
+
+          <span>
+            TD Actual: {formatFixed(actualMaxMd, 2)} {unitConfig.lengthUnit}
+          </span>
+
+          {trajectoryDisplayMode === TRAJECTORY_DISPLAY_MODES.ACTUAL && (
+            <span>Real Progress: {formatFixed(actualProgressPercent, 2)}%</span>
+          )}
+
           <span>
             Max Offset: {formatFixed(maxHorizontalOffset, 2)}{" "}
             {unitConfig.lengthUnit}
@@ -237,17 +467,27 @@ function PlanView2D({
             scaleanchor: "x",
             scaleratio: 1,
           },
+
           legend: {
             orientation: "h",
-            x: 0,
-            y: 1.12,
+            x: plotResponsiveStyle.legendX,
+            y: plotResponsiveStyle.legendY,
+            yanchor: plotResponsiveStyle.legendYAnchor,
+            font: {
+              size: plotResponsiveStyle.legendFontSize,
+            },
+            itemsizing: "trace",
+            itemwidth: 22,
+            bgcolor: "rgba(15, 23, 42, 0.85)",
           },
+
           margin: {
-            l: 70,
-            r: 30,
-            t: 90,
-            b: 70,
+            l: plotResponsiveStyle.marginLeft,
+            r: 85,
+            t: plotResponsiveStyle.marginTop,
+            b: plotResponsiveStyle.marginBottom,
           },
+
           paper_bgcolor: "#0f172a",
           plot_bgcolor: "#111827",
           font: {

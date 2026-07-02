@@ -69,3 +69,23 @@
     height: 420px;
   }
 }
+
+@media screen and (max-width: 430px) {
+  .well-path-3d__header {
+    margin-bottom: 0.65rem;
+  }
+
+  .well-path-3d__summary {
+    gap: 0.35rem;
+  }
+
+  .well-path-3d__summary span {
+    padding: 0.28rem 0.5rem;
+    font-size: 0.68rem;
+    line-height: 1.1;
+  }
+
+  .well-path-3d__chart {
+    height: 420px;
+  }
+}

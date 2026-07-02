@@ -125,8 +125,26 @@
   .vertical-view-2d__summary {
     justify-content: flex-start;
   }
+}
+@media screen and (max-width: 430px) {
+  .vertical-view-2d__header {
+    margin-bottom: 0.65rem;
+  }
 
+  .vertical-view-2d__side {
+    gap: 0.5rem;
+  }
+
+  .vertical-view-2d__summary {
+    gap: 0.35rem;
+  }
+
+  .vertical-view-2d__summary span {
+    padding: 0.28rem 0.5rem;
+    font-size: 0.68rem;
+    line-height: 1.1;
+  }
   .vertical-view-2d__chart {
-    height: 380px;
+    height: 420px;
   }
 }
